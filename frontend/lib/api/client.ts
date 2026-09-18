@@ -11,12 +11,11 @@ function resolveApiBase(): string {
   return `https://${trimmed}`;
 }
 
-const API_BASE = resolveApiBase();
-
 export const apiClient = {
   async checkHealth(): Promise<HealthStatusResponse> {
+    const apiBase = resolveApiBase();
     try {
-      const res = await fetch(`${API_BASE}/health`, {
+      const res = await fetch(`${apiBase}/health`, {
         cache: "no-store",
       });
       if (!res.ok) {
@@ -29,7 +28,8 @@ export const apiClient = {
   },
 
   async optimizeEnergy(scenario: EnergyScenario): Promise<OptimizationResponse> {
-    const res = await fetch(`${API_BASE}/api/v1/optimize-energy`, {
+    const apiBase = resolveApiBase();
+    const res = await fetch(`${apiBase}/api/v1/optimize-energy`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
