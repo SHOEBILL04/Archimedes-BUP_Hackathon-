@@ -207,12 +207,29 @@ class NormalizedDirective:
                 f"Unsupported directive_type '{self.directive_type}'. Must be one of {sorted(SUPPORTED_DIRECTIVE_TYPES)}"
             )
 
-        if self.applies and self.directive_type != "no_op":
+        if self.directive_type == "no_op":
+            if self.applies:
+                object.__setattr__(self, "applies", False)
+            if self.hours:
+                object.__setattr__(self, "hours", [])
+            return
+
+        if self.applies:
             if not self.hours:
                 raise ValueError("Active directive must specify at least one target hour")
+            if any(type(h) is not int for h in self.hours):
+                raise ValueError(f"All directive hours must be integers, got {self.hours}")
             for h in self.hours:
                 if not (0 <= h < HOURS_IN_DAY):
                     raise ValueError(f"Directive hour {h} out of bounds [0, {HOURS_IN_DAY - 1}]")
+            if len(self.hours) != len(set(self.hours)):
+                raise ValueError(
+                    f"Directive hours must be unique, got duplicate hours in {self.hours}"
+                )
+            if self.hours != sorted(self.hours):
+                raise ValueError(
+                    f"Directive hours must be sorted in ascending order, got {self.hours}"
+                )
 
             if self.directive_type == "solar_reduction" and (
                 self.factor is None or not (0.0 <= self.factor <= 1.0)

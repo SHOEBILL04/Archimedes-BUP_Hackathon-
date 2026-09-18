@@ -72,7 +72,7 @@ def test_optimize_energy_placeholder_response() -> None:
     assert "verification" in data
     assert data["verification"]["verified"] is True
     assert "status_message" in data
-    assert "[SCAFFOLD_PLACEHOLDER]" in data["status_message"]
+    assert "Optimal energy dispatch" in data["status_message"]
 
 
 def test_invalid_array_length_rejected() -> None:

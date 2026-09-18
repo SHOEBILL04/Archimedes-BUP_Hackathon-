@@ -8,8 +8,25 @@ from app.core.exceptions import ValidationException
 class GuardrailValidationError(ValidationException):
     """Raised when deterministic guardrail validation detects an unrecoverable directive violation."""
 
-    def __init__(self, message: str, details: Any | None = None) -> None:
-        super().__init__(message, details)
+    def __init__(
+        self,
+        message: str,
+        errors: list[Any] | None = None,
+        details: Any | None = None,
+    ) -> None:
+        self.errors = errors or []
+        full_details = details or {}
+        if isinstance(full_details, dict) and self.errors:
+            full_details["errors"] = [
+                {
+                    "field": getattr(e, "field", str(e)),
+                    "code": getattr(e, "code", "VALIDATION_ERROR"),
+                    "message": getattr(e, "message", str(e)),
+                    "value": getattr(e, "value", None),
+                }
+                for e in self.errors
+            ]
+        super().__init__(message, full_details)
 
 
 class ReplayValidationError(ValidationException):

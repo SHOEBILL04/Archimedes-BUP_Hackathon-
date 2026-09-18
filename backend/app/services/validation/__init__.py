@@ -13,6 +13,16 @@ from app.services.optimizer.models import (
     ReplayValidationResult,
 )
 from app.services.validation.compiler import compile_directives
+from app.services.validation.directive_guardrail import (
+    BatchDirectiveValidationResult,
+    DeterministicDirectiveGuardrail,
+    DirectiveValidationErrorItem,
+    DirectiveValidationResult,
+    validate_directive,
+    validate_directive_batch,
+    validate_directive_batch_strict,
+    validate_directive_strict,
+)
 from app.services.validation.exceptions import GuardrailValidationError
 from app.services.validation.guardrails import noop, validate_directives, validate_interpretation
 from app.services.validation.interface import (
@@ -32,13 +42,18 @@ from app.services.validation.replay_validator import (
 
 __all__ = [
     # Domain Models & Types
+    "BatchDirectiveValidationResult",
     "CompiledDirectives",
     "DirectiveType",
+    "DirectiveValidationErrorItem",
+    "DirectiveValidationResult",
     "NormalizedDirective",
     "ReplayValidationInput",
     "ReplayValidationResult",
     "SUPPORTED_DIRECTIVE_TYPES",
     "ValidationResult",
+    # Guardrails
+    "DeterministicDirectiveGuardrail",
     # Exceptions
     "GuardrailValidationError",
     "ReplayValidationError",
@@ -52,6 +67,10 @@ __all__ = [
     "replay_validate",
     "replay_validate_schedule",
     "validate_and_raise",
+    "validate_directive",
+    "validate_directive_batch",
+    "validate_directive_batch_strict",
+    "validate_directive_strict",
     "validate_directives",
     "validate_interpretation",
 ]
