@@ -36,12 +36,12 @@ export function BatteryChart({ schedule }: BatteryChartProps) {
         }));
 
   return (
-    <Card className="bento-card border-slate-200/90 hover:border-[#425B9A]/30 h-full flex flex-col justify-between">
+    <Card className="bento-card border-slate-200/90 hover:border-slate-300 h-full flex flex-col justify-between">
       <CardHeader className="p-6 pb-2">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <CardTitle className="flex items-center gap-2 text-sm font-bold text-[#425B9A]">
-              <BatteryCharging className="h-4 w-4 text-[#425B9A]" />
+            <CardTitle className="flex items-center gap-2 text-sm font-bold text-[#0F172A]">
+              <BatteryCharging className="h-4 w-4 text-indigo-600" />
               <span>Battery State of Charge & Cycling</span>
             </CardTitle>
             <CardDescription className="text-xs text-slate-500">
@@ -64,8 +64,8 @@ export function BatteryChart({ schedule }: BatteryChartProps) {
                   borderRadius: "12px",
                   fontSize: "11px",
                   fontFamily: "monospace",
-                  color: "#1E293B",
-                  boxShadow: "0 10px 25px -4px rgba(66, 91, 154, 0.15)",
+                  color: "#0F172A",
+                  boxShadow: "0 10px 25px -4px rgba(15, 23, 42, 0.08)",
                 }}
               />
               <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace", paddingTop: "8px" }} />
@@ -73,23 +73,23 @@ export function BatteryChart({ schedule }: BatteryChartProps) {
                 type="monotone"
                 dataKey="soc"
                 name="Battery SoC (kWh)"
-                stroke="#425B9A"
+                stroke="#4F46E5"
                 strokeWidth={2.5}
                 dot={false}
               />
               <Line
                 type="step"
                 dataKey="charge"
-                name="Charge Power (kW)"
-                stroke="#76C0EC"
-                strokeWidth={1.8}
+                name="Charge Input (kW)"
+                stroke="#10B981"
+                strokeWidth={2}
                 dot={false}
               />
               <Line
                 type="step"
                 dataKey="discharge"
-                name="Discharge Power (kW)"
-                stroke="#FF95A5"
+                name="Discharge Output (kW)"
+                stroke="#F97316"
                 strokeWidth={2}
                 dot={false}
               />

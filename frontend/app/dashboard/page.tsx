@@ -22,11 +22,11 @@ export default function DashboardPage() {
       <div className="bento-card p-6 border-slate-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-[#425B9A] tracking-tight flex items-center gap-2">
-              <Sliders className="h-5 w-5 text-[#425B9A]" />
+            <h1 className="text-xl font-bold text-[#0F172A] tracking-tight flex items-center gap-2">
+              <Sliders className="h-5 w-5 text-emerald-600" />
               <span>Energy Optimization Workbench</span>
             </h1>
-            <Badge variant="sky" className="font-mono text-[10px]">
+            <Badge variant="emerald" className="font-mono text-[10px]">
               PuLP Engine
             </Badge>
           </div>
@@ -35,8 +35,8 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#425B9A] bg-[#FFF6DC] border border-[#f5e4ab] px-3.5 py-2 rounded-xl w-fit shadow-xs">
-          <Cpu className="h-3.5 w-3.5 text-[#425B9A]" />
+        <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-800 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl w-fit shadow-2xs">
+          <Cpu className="h-3.5 w-3.5 text-slate-600" />
           <span>Solver: COIN-OR CBC (Linear Program)</span>
         </div>
       </div>

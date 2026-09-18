@@ -34,19 +34,19 @@ export function DemandChart({ schedule }: DemandChartProps) {
         }));
 
   return (
-    <Card className="bento-card border-slate-200/90 hover:border-[#425B9A]/30 h-full flex flex-col justify-between">
+    <Card className="bento-card border-slate-200/90 hover:border-slate-300 h-full flex flex-col justify-between">
       <CardHeader className="p-6 pb-2">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <CardTitle className="flex items-center gap-2 text-sm font-bold text-[#425B9A]">
-              <Activity className="h-4 w-4 text-[#425B9A]" />
+            <CardTitle className="flex items-center gap-2 text-sm font-bold text-[#0F172A]">
+              <Activity className="h-4 w-4 text-sky-600" />
               <span>Campus Demand vs. Grid Import</span>
             </CardTitle>
             <CardDescription className="text-xs text-slate-500">
               Hourly comparison between gross campus energy demand and grid import.
             </CardDescription>
           </div>
-          <span className="text-[10px] font-mono text-[#425B9A] bg-[#425B9A]/10 border border-[#425B9A]/20 px-2 py-0.5 rounded-md hidden sm:inline-block font-bold">
+          <span className="text-[10px] font-mono text-sky-700 bg-sky-50 border border-sky-200/80 px-2 py-0.5 rounded-md hidden sm:inline-block font-semibold">
             24h Profile
           </span>
         </div>
@@ -56,13 +56,13 @@ export function DemandChart({ schedule }: DemandChartProps) {
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
-                <linearGradient id="lightDemandGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#76C0EC" stopOpacity={0.45} />
-                  <stop offset="95%" stopColor="#76C0EC" stopOpacity={0.05} />
+                <linearGradient id="cleanDemandGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#0F172A" stopOpacity={0.2} />
+                  <stop offset="95%" stopColor="#0F172A" stopOpacity={0.02} />
                 </linearGradient>
-                <linearGradient id="lightGridGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#425B9A" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="#425B9A" stopOpacity={0.02} />
+                <linearGradient id="cleanGridGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#0EA5E9" stopOpacity={0.35} />
+                  <stop offset="95%" stopColor="#0EA5E9" stopOpacity={0.03} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
@@ -75,8 +75,8 @@ export function DemandChart({ schedule }: DemandChartProps) {
                   borderRadius: "12px",
                   fontSize: "11px",
                   fontFamily: "monospace",
-                  color: "#1E293B",
-                  boxShadow: "0 10px 25px -4px rgba(66, 91, 154, 0.15)",
+                  color: "#0F172A",
+                  boxShadow: "0 10px 25px -4px rgba(15, 23, 42, 0.08)",
                 }}
               />
               <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace", paddingTop: "8px" }} />
@@ -84,19 +84,19 @@ export function DemandChart({ schedule }: DemandChartProps) {
                 type="monotone"
                 dataKey="demand"
                 name="Gross Demand (kWh)"
-                stroke="#76C0EC"
+                stroke="#0F172A"
                 strokeWidth={2}
                 fillOpacity={1}
-                fill="url(#lightDemandGrad)"
+                fill="url(#cleanDemandGrad)"
               />
               <Area
                 type="monotone"
                 dataKey="grid"
-                name="Grid Dispatched (kWh)"
-                stroke="#425B9A"
+                name="Grid Import (kWh)"
+                stroke="#0284C7"
                 strokeWidth={2.5}
                 fillOpacity={1}
-                fill="url(#lightGridGrad)"
+                fill="url(#cleanGridGrad)"
               />
             </AreaChart>
           </ResponsiveContainer>

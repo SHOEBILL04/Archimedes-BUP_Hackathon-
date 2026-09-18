@@ -38,12 +38,12 @@ export function SolarChart({ schedule }: SolarChartProps) {
       <CardHeader className="p-6 pb-2">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <CardTitle className="flex items-center gap-2 text-sm font-bold text-[#425B9A]">
+            <CardTitle className="flex items-center gap-2 text-sm font-bold text-[#0F172A]">
               <Sun className="h-4 w-4 text-amber-500" />
               <span>Solar Generation & Utilization</span>
             </CardTitle>
             <CardDescription className="text-xs text-slate-500">
-              Photovoltaic baseline vs. real-time energy directed into campus loads.
+              Photovoltaic baseline vs. real-time clean energy directed into campus loads.
             </CardDescription>
           </div>
         </div>
@@ -53,13 +53,13 @@ export function SolarChart({ schedule }: SolarChartProps) {
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
-                <linearGradient id="lightSolarGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
+                <linearGradient id="cleanSolarAmberGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.35} />
+                  <stop offset="95%" stopColor="#F59E0B" stopOpacity={0.02} />
                 </linearGradient>
-                <linearGradient id="lightSolarUsedGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#76C0EC" stopOpacity={0.5} />
-                  <stop offset="95%" stopColor="#76C0EC" stopOpacity={0.05} />
+                <linearGradient id="cleanSolarEmeraldGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.45} />
+                  <stop offset="95%" stopColor="#10B981" stopOpacity={0.05} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
@@ -72,8 +72,8 @@ export function SolarChart({ schedule }: SolarChartProps) {
                   borderRadius: "12px",
                   fontSize: "11px",
                   fontFamily: "monospace",
-                  color: "#1E293B",
-                  boxShadow: "0 10px 25px -4px rgba(66, 91, 154, 0.15)",
+                  color: "#0F172A",
+                  boxShadow: "0 10px 25px -4px rgba(15, 23, 42, 0.08)",
                 }}
               />
               <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace", paddingTop: "8px" }} />
@@ -81,19 +81,20 @@ export function SolarChart({ schedule }: SolarChartProps) {
                 type="monotone"
                 dataKey="effective_solar"
                 name="Potential Solar (kWh)"
-                stroke="#F59E0B"
+                stroke="#D97706"
                 strokeWidth={1.5}
+                strokeDasharray="4 4"
                 fillOpacity={1}
-                fill="url(#lightSolarGrad)"
+                fill="url(#cleanSolarAmberGrad)"
               />
               <Area
                 type="monotone"
                 dataKey="solar_used"
-                name="Dispatched Solar (kWh)"
-                stroke="#76C0EC"
-                strokeWidth={2}
+                name="Clean Solar Utilized (kWh)"
+                stroke="#059669"
+                strokeWidth={2.5}
                 fillOpacity={1}
-                fill="url(#lightSolarUsedGrad)"
+                fill="url(#cleanSolarEmeraldGrad)"
               />
             </AreaChart>
           </ResponsiveContainer>
