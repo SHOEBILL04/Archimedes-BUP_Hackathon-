@@ -11,29 +11,54 @@ from app.services.optimizer.exceptions import (
     OptimizationTimeoutError,
     SolverExecutionError,
 )
-from app.services.optimizer.guardrails import CompiledDirectives
+from app.services.optimizer.interface import IOptimizer
 from app.services.optimizer.lp_optimizer import (
     BatteryInput,
     HourResult,
     InfeasibleError,
     OptimizationError,
-    OptimizationResult,
     SolverError,
+)
+from app.services.optimizer.models import (
+    SUPPORTED_DIRECTIVE_TYPES,
+    BatteryConfig,
+    CompiledDirectives,
+    DirectiveType,
+    HourlyEnergyData,
+    HourlyEnergyProfile,
+    HourlyScheduleOutput,
+    NormalizedDirective,
+    OptimizationInput,
+    OptimizationResult,
+    SolverStatus,
 )
 from app.services.optimizer.optimizer_service import run_optimization
 from app.services.optimizer.solver import EnergyOptimizer
 
 __all__ = [
+    # Domain Models & Types
+    "BatteryConfig",
     "BatteryInput",
     "CompiledDirectives",
+    "DirectiveType",
     "EnergyOptimizer",
     "HourResult",
+    "HourlyEnergyData",
+    "HourlyEnergyProfile",
+    "HourlyScheduleOutput",
     "InfeasibleError",
+    "NormalizedDirective",
     "OptimizationError",
     "OptimizationInfeasibleError",
+    "OptimizationInput",
     "OptimizationResult",
     "OptimizationTimeoutError",
+    "SUPPORTED_DIRECTIVE_TYPES",
     "SolverError",
     "SolverExecutionError",
+    "SolverStatus",
+    # Interfaces
+    "IOptimizer",
+    # Legacy Run Entrypoint
     "run_optimization",
 ]
