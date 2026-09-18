@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+import json
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Literal
+from typing import Literal
 
 from dotenv import load_dotenv
-from pydantic import Field, field_validator
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent.parent
@@ -54,24 +55,24 @@ class Settings(BaseSettings):
     solver_timeout_seconds: int = Field(default=5, alias="SOLVER_TIMEOUT_SECONDS")
     api_timeout_seconds: int = Field(default=29, alias="API_TIMEOUT_SECONDS")
 
-    cors_origins: list[str] = Field(
-        default=[
-            "http://localhost:3000",
-            "http://127.0.0.1:3000",
-            "http://frontend:3000",
-            "*",
-        ],
+    cors_origins_raw: str = Field(
+        default="http://localhost:3000,http://127.0.0.1:3000,http://frontend:3000,*",
         alias="CORS_ORIGINS",
     )
 
-    @field_validator("cors_origins", mode="before")
-    @classmethod
-    def parse_cors_origins(cls, v: Any) -> list[str]:
-        if isinstance(v, str):
-            if v.strip() == "*":
-                return ["*"]
-            return [origin.strip() for origin in v.split(",") if origin.strip()]
-        return v
+    @property
+    def cors_origins(self) -> list[str]:
+        raw = self.cors_origins_raw.strip()
+        if not raw or raw == "*":
+            return ["*"]
+        if raw.startswith("[") and raw.endswith("]"):
+            try:
+                parsed = json.loads(raw)
+                if isinstance(parsed, list):
+                    return [str(item).strip() for item in parsed if str(item).strip()]
+            except Exception:
+                pass
+        return [origin.strip() for origin in raw.split(",") if origin.strip()]
 
 
 @lru_cache
