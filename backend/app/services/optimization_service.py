@@ -8,6 +8,7 @@ from app.schemas.optimization import (
     DirectiveInterpretation,
     EnergyScenario,
     HourlyPlanEntry,
+    HourlyPlanItem,
     HourSchedule,
     OptimizationResponse,
     VerificationResult,

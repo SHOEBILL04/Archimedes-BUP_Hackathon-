@@ -186,6 +186,7 @@ class HourlyPlanItem(BaseModel):
 
 
 HourlyPlanEntry = HourlyPlanItem
+DirectiveInterpretationResponse = DirectiveInterpretation
 
 
 class HourlyScheduleOutput(BaseModel):
@@ -201,6 +202,9 @@ class HourlyScheduleOutput(BaseModel):
     grid_kwh: float = Field(ge=0)
     tariff_bdt_per_kwh: float = Field(ge=0)
     grid_cost_bdt: float = Field(ge=0)
+
+
+HourSchedule = HourlyScheduleOutput
 
 
 class VerificationResult(BaseModel):
