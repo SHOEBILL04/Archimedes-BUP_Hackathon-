@@ -80,10 +80,18 @@ class LLMService:
     def __init__(self, settings: Settings | None = None) -> None:
         self.settings = settings or get_settings()
 
-    @traceable(name="operator_notes_interpretation", run_type="chain")
+    @traceable(name="operator_notes_interpretation", run_type="chain", project_name="BUP HACKATHON")
     async def interpret_notes(self, scenario: EnergyScenario) -> list[DirectiveInterpretation]:
         """Convert natural language operator notes into structured directive candidates with LangSmith tracing."""
         n_notes = len(scenario.operator_notes)
+
+        # Ensure LangSmith tracing environment is active if key is configured
+        if self.settings.langchain_api_key:
+            import os
+            os.environ["LANGCHAIN_TRACING_V2"] = "true" if self.settings.langchain_tracing_v2 else "false"
+            os.environ["LANGCHAIN_ENDPOINT"] = self.settings.langchain_endpoint
+            os.environ["LANGCHAIN_API_KEY"] = self.settings.langchain_api_key
+            os.environ["LANGCHAIN_PROJECT"] = self.settings.langchain_project or "BUP HACKATHON"
 
         # 1. Determine active API credentials (prefer Groq, fallback to OpenAI)
         api_key = self.settings.groq_api_key or self.settings.openai_api_key

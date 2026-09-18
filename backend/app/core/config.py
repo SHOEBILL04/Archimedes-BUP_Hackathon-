@@ -55,6 +55,13 @@ class Settings(BaseSettings):
     solver_timeout_seconds: int = Field(default=5, alias="SOLVER_TIMEOUT_SECONDS")
     api_timeout_seconds: int = Field(default=29, alias="API_TIMEOUT_SECONDS")
 
+    langchain_tracing_v2: bool = Field(default=True, alias="LANGCHAIN_TRACING_V2")
+    langchain_endpoint: str = Field(
+        default="https://api.smith.langchain.com", alias="LANGCHAIN_ENDPOINT"
+    )
+    langchain_api_key: str = Field(default="", alias="LANGCHAIN_API_KEY")
+    langchain_project: str = Field(default="BUP HACKATHON", alias="LANGCHAIN_PROJECT")
+
     cors_origins_raw: str = Field(
         default="http://localhost:3000,http://127.0.0.1:3000,http://frontend:3000,*",
         alias="CORS_ORIGINS",

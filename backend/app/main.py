@@ -12,15 +12,24 @@ from app.api.routes.health import router as root_health_router
 from app.api.routes.optimization import router as root_optimization_router
 from app.core.config import get_settings
 from app.core.exceptions import AppBaseException
+import os
 from app.core.logging import logger
 
 settings = get_settings()
+
+if settings.langchain_api_key:
+    os.environ["LANGCHAIN_TRACING_V2"] = "true" if settings.langchain_tracing_v2 else "false"
+    os.environ["LANGCHAIN_ENDPOINT"] = settings.langchain_endpoint
+    os.environ["LANGCHAIN_API_KEY"] = settings.langchain_api_key
+    os.environ["LANGCHAIN_PROJECT"] = settings.langchain_project
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None]:
     """Startup and shutdown events."""
     logger.info("Starting %s in %s mode", settings.app_name, settings.app_env)
+    if settings.langchain_api_key:
+        logger.info("LangSmith tracing enabled for project: %s", settings.langchain_project)
     yield
     logger.info("Shutting down %s", settings.app_name)
 
