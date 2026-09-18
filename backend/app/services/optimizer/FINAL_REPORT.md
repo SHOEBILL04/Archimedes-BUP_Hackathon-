@@ -1,7 +1,7 @@
 # Mathematical Optimization & Deterministic Validation System — Final Report
 
 **Role**: Optimization + Validation Engineer  
-**Project**: Smart Campus Energy Optimization Platform (BUP CSE Fest 2026 — GridWise LLM Challenge)  
+**Project**: Smart Campus Energy Optimization Platform (GridWise LLM Engine)  
 **Date**: September 18, 2026  
 **Status**: Complete, Verified & Passing (72/72 Unit Tests)
 

@@ -45,9 +45,6 @@ export function Header({
     <header className="h-16 border-b border-slate-200/90 bg-white/90 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-20">
       <div className="flex items-center gap-3">
         <h2 className="text-sm font-bold text-[#0F172A] tracking-tight">{title}</h2>
-        <Badge variant="emerald" className="font-mono text-[10px] hidden sm:inline-flex">
-          BUP CSE Fest 2026
-        </Badge>
       </div>
 
       <div className="flex items-center gap-4">

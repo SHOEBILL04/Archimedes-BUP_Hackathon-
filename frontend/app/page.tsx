@@ -32,38 +32,38 @@ export default function HomePage() {
           <div className="bento-hero p-7 relative overflow-hidden h-full flex flex-col justify-between group">
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="hero" className="font-mono gap-1.5 px-3 py-1">
-                  <Sparkles className="h-3 w-3 text-emerald-400" />
-                  <span>BUP CSE Fest 2026 Challenge</span>
+                <Badge variant="emerald" className="font-mono gap-1.5 px-3 py-1">
+                  <Sparkles className="h-3 w-3 text-emerald-600" />
+                  <span>Autonomous Energy Dispatch</span>
                 </Badge>
-                <Badge variant="hero-cyan" className="font-mono text-[10px]">
+                <Badge variant="cyan" className="font-mono text-[10px]">
                   GridWise LLM Engine
                 </Badge>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
                 Smart Campus Energy <br className="hidden sm:inline" />
-                <span className="text-emerald-400">Optimization Platform</span>
+                <span className="text-emerald-600">Optimization Platform</span>
               </h1>
 
-              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl font-normal">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl font-normal">
                 Multi-stage dispatch system coupling natural language operator directives with
                 deterministic physical guardrails and PuLP/CBC linear programming to minimize
                 grid electricity tariffs while guaranteeing battery longevity.
               </p>
             </div>
 
-            <div className="pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-700/60 mt-4">
-              <div className="flex flex-wrap items-center gap-4 text-xs font-mono font-medium text-slate-300">
-                <div className="flex items-center gap-1.5 text-emerald-400">
+            <div className="pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 mt-4">
+              <div className="flex flex-wrap items-center gap-4 text-xs font-mono font-medium text-slate-600">
+                <div className="flex items-center gap-1.5 text-emerald-600">
                   <Zap className="h-3.5 w-3.5" />
                   <span>LP Solver</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-sky-400">
+                <div className="flex items-center gap-1.5 text-sky-600">
                   <ShieldCheck className="h-3.5 w-3.5" />
                   <span>Replay Validator</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-amber-400">
+                <div className="flex items-center gap-1.5 text-amber-600">
                   <Cpu className="h-3.5 w-3.5" />
                   <span>LLM Guardrails</span>
                 </div>
@@ -71,7 +71,7 @@ export default function HomePage() {
 
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors group/link font-mono"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors group/link font-mono"
               >
                 <span>Full Workbench</span>
                 <ArrowRight className="h-3.5 w-3.5 group-hover/link:translate-x-1 transition-transform" />

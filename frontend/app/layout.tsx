@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Archimedes | Smart Campus Energy Optimization Platform",
   description:
-    "Production-grade 24-hour energy optimization platform combining PuLP/CBC Linear Programming with deterministic guardrails and LLM operator directive interpretation for BUP CSE Fest 2026.",
+    "Production-grade 24-hour energy optimization platform combining PuLP/CBC Linear Programming with deterministic guardrails and LLM operator directive interpretation.",
   icons: {
     icon: [
       { url: "/icon.svg", type: "image/svg+xml" },
