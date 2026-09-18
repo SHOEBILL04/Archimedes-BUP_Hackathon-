@@ -14,27 +14,57 @@ import {
 import { cn } from "@/lib/utils";
 import { ArchimedesIcon } from "./ArchimedesLogo";
 
-const NAV_ITEMS = [
-  {
-    label: "Overview",
-    href: "/",
-    icon: LayoutDashboard,
-  },
-  {
-    label: "Optimizer",
-    href: "/dashboard",
-    icon: Sliders,
-  },
-  {
-    label: "FastAPI Docs",
-    href: "http://localhost:8000/docs",
-    icon: FileText,
-    external: true,
-  },
-];
+import { useSyncExternalStore } from "react";
+
+function subscribe() {
+  return () => {};
+}
+
+function getDocsUrlSnapshot(): string {
+  if (typeof window === "undefined") {
+    return "https://archimedes-energy-backend.onrender.com/docs";
+  }
+  const host = window.location.hostname;
+  if (host === "localhost" || host === "127.0.0.1" || host === "0.0.0.0") {
+    return "http://localhost:8000/docs";
+  }
+  const raw =
+    process.env.NEXT_PUBLIC_API_URL ||
+    "https://archimedes-energy-backend.onrender.com";
+  const trimmed = raw.trim().replace(/\/+$/, "");
+  return trimmed.startsWith("http") ? `${trimmed}/docs` : `https://${trimmed}/docs`;
+}
+
+function getDocsUrlServerSnapshot(): string {
+  return "https://archimedes-energy-backend.onrender.com/docs";
+}
 
 export function Sidebar() {
   const pathname = usePathname();
+  const docsUrl = useSyncExternalStore(
+    subscribe,
+    getDocsUrlSnapshot,
+    getDocsUrlServerSnapshot
+  );
+
+  const navItems = [
+    {
+      label: "Overview",
+      href: "/",
+      icon: LayoutDashboard,
+    },
+    {
+      label: "Optimizer",
+      href: "/dashboard",
+      icon: Sliders,
+    },
+    {
+      label: "FastAPI Docs",
+      href: docsUrl,
+      icon: FileText,
+      external: true,
+    },
+  ];
 
   return (
     <aside className="w-64 border-r border-slate-200/90 bg-white flex flex-col justify-between shrink-0 min-h-screen">
@@ -65,7 +95,7 @@ export function Sidebar() {
           <div className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider font-mono">
             Navigation
           </div>
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
 
