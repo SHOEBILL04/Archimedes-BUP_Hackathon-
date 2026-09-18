@@ -9,6 +9,7 @@ from fastapi.responses import JSONResponse
 
 from app.api.router import api_v1_router
 from app.api.routes.health import router as root_health_router
+from app.api.routes.optimization import router as root_optimization_router
 from app.core.config import get_settings
 from app.core.exceptions import AppBaseException
 from app.core.logging import logger
@@ -58,8 +59,9 @@ async def app_base_exception_handler(request: Request, exc: AppBaseException) ->
     )
 
 
-# Expose root GET /health
+# Expose root GET /health and POST /optimize-energy for hackathon judge
 app.include_router(root_health_router)
+app.include_router(root_optimization_router)
 
 # Expose API v1 routes (/api/v1/health, /api/v1/optimize-energy)
 app.include_router(api_v1_router, prefix="/api/v1")

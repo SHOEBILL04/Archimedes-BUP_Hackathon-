@@ -5,6 +5,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { ScenarioForm } from "@/components/energy/ScenarioForm";
 import { OptimizationSummary } from "@/components/energy/OptimizationSummary";
 import { ScheduleTable } from "@/components/energy/ScheduleTable";
+import { DirectivesCard } from "@/components/energy/DirectivesCard";
 import { DemandChart } from "@/components/charts/DemandChart";
 import { SolarChart } from "@/components/charts/SolarChart";
 import { BatteryChart } from "@/components/charts/BatteryChart";
@@ -49,6 +50,10 @@ export default function DashboardPage() {
         {/* Left Column: Directives & Scenario Console */}
         <div className="lg:col-span-5 space-y-5">
           <ScenarioForm onOptimized={setOptimizationResult} />
+          <DirectivesCard
+            directives={optimizationResult?.directive_interpretation}
+            statusMessage={optimizationResult?.status_message}
+          />
         </div>
 
         {/* Right Column: Visual Telemetry Stack */}
