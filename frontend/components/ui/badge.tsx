@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "cyan" | "ice" | "secondary" | "outline" | "success" | "warning";
+  variant?: "default" | "indigo" | "sky" | "cream" | "coral" | "secondary" | "outline" | "success" | "warning";
 }
 
 function Badge({
@@ -11,13 +11,15 @@ function Badge({
   ...props
 }: BadgeProps) {
   const variantStyles = {
-    default: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30 shadow-[0_0_12px_rgba(0,240,255,0.1)]",
-    cyan: "bg-cyan-400/15 text-cyan-300 border-cyan-400/30",
-    ice: "bg-sky-400/15 text-sky-300 border-sky-400/30",
-    secondary: "bg-slate-800/80 text-slate-300 border-white/10",
-    outline: "text-slate-300 border-white/10 bg-transparent",
-    success: "bg-teal-500/15 text-teal-300 border-teal-500/30",
-    warning: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+    default: "bg-[#425B9A]/10 text-[#425B9A] border-[#425B9A]/20 font-semibold",
+    indigo: "bg-[#425B9A]/10 text-[#425B9A] border-[#425B9A]/25 font-semibold",
+    sky: "bg-[#76C0EC]/20 text-[#254b7c] border-[#76C0EC]/40 font-semibold",
+    cream: "bg-[#FFF6DC] text-[#78590c] border-[#f5e4ab] font-semibold",
+    coral: "bg-[#FF95A5]/25 text-[#b91c38] border-[#FF95A5]/45 font-bold",
+    secondary: "bg-slate-100 text-slate-700 border-slate-200",
+    outline: "text-slate-600 border-slate-200 bg-white",
+    success: "bg-emerald-50 text-emerald-700 border-emerald-200 font-semibold",
+    warning: "bg-amber-50 text-amber-800 border-amber-200 font-semibold",
   };
 
   return (

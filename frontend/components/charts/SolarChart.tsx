@@ -34,15 +34,15 @@ export function SolarChart({ schedule }: SolarChartProps) {
         }));
 
   return (
-    <Card className="bento-card border-white/[0.08] hover:border-amber-400/30 h-full flex flex-col justify-between">
+    <Card className="bento-card border-slate-200/90 hover:border-amber-300 h-full flex flex-col justify-between">
       <CardHeader className="p-6 pb-2">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <CardTitle className="flex items-center gap-2 text-sm font-semibold text-white">
-              <Sun className="h-4 w-4 text-amber-400" />
+            <CardTitle className="flex items-center gap-2 text-sm font-bold text-[#425B9A]">
+              <Sun className="h-4 w-4 text-amber-500" />
               <span>Solar Generation & Utilization</span>
             </CardTitle>
-            <CardDescription className="text-xs text-slate-400">
+            <CardDescription className="text-xs text-slate-500">
               Photovoltaic baseline vs. real-time energy directed into campus loads.
             </CardDescription>
           </div>
@@ -53,26 +53,27 @@ export function SolarChart({ schedule }: SolarChartProps) {
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
-                <linearGradient id="bentoSolarGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                <linearGradient id="lightSolarGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
                 </linearGradient>
-                <linearGradient id="bentoSolarUsedGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#00f0ff" stopOpacity={0.45} />
-                  <stop offset="95%" stopColor="#00f0ff" stopOpacity={0.05} />
+                <linearGradient id="lightSolarUsedGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#76C0EC" stopOpacity={0.5} />
+                  <stop offset="95%" stopColor="#76C0EC" stopOpacity={0.05} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="hour" stroke="#64748b" fontSize={10} tickLine={false} />
-              <YAxis stroke="#64748b" fontSize={10} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+              <XAxis dataKey="hour" stroke="#64748B" fontSize={10} tickLine={false} />
+              <YAxis stroke="#64748B" fontSize={10} tickLine={false} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#070b16",
-                  borderColor: "rgba(255, 255, 255, 0.1)",
+                  backgroundColor: "#FFFFFF",
+                  borderColor: "#E2E8F0",
                   borderRadius: "12px",
                   fontSize: "11px",
                   fontFamily: "monospace",
-                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.6)",
+                  color: "#1E293B",
+                  boxShadow: "0 10px 25px -4px rgba(66, 91, 154, 0.15)",
                 }}
               />
               <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace", paddingTop: "8px" }} />
@@ -80,19 +81,19 @@ export function SolarChart({ schedule }: SolarChartProps) {
                 type="monotone"
                 dataKey="effective_solar"
                 name="Potential Solar (kWh)"
-                stroke="#f59e0b"
+                stroke="#F59E0B"
                 strokeWidth={1.5}
                 fillOpacity={1}
-                fill="url(#bentoSolarGrad)"
+                fill="url(#lightSolarGrad)"
               />
               <Area
                 type="monotone"
                 dataKey="solar_used"
                 name="Dispatched Solar (kWh)"
-                stroke="#00f0ff"
+                stroke="#76C0EC"
                 strokeWidth={2}
                 fillOpacity={1}
-                fill="url(#bentoSolarUsedGrad)"
+                fill="url(#lightSolarUsedGrad)"
               />
             </AreaChart>
           </ResponsiveContainer>

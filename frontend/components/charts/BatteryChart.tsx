@@ -36,15 +36,15 @@ export function BatteryChart({ schedule }: BatteryChartProps) {
         }));
 
   return (
-    <Card className="bento-card border-white/[0.08] hover:border-cyan-400/30 h-full flex flex-col justify-between">
+    <Card className="bento-card border-slate-200/90 hover:border-[#425B9A]/30 h-full flex flex-col justify-between">
       <CardHeader className="p-6 pb-2">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <CardTitle className="flex items-center gap-2 text-sm font-semibold text-white">
-              <BatteryCharging className="h-4 w-4 text-cyan-400" />
+            <CardTitle className="flex items-center gap-2 text-sm font-bold text-[#425B9A]">
+              <BatteryCharging className="h-4 w-4 text-[#425B9A]" />
               <span>Battery State of Charge & Cycling</span>
             </CardTitle>
-            <CardDescription className="text-xs text-slate-400">
+            <CardDescription className="text-xs text-slate-500">
               Energy stored in battery reserve (kWh) and active charge / discharge hourly cycles.
             </CardDescription>
           </div>
@@ -54,17 +54,18 @@ export function BatteryChart({ schedule }: BatteryChartProps) {
         <div className="h-[280px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="hour" stroke="#64748b" fontSize={10} tickLine={false} />
-              <YAxis stroke="#64748b" fontSize={10} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+              <XAxis dataKey="hour" stroke="#64748B" fontSize={10} tickLine={false} />
+              <YAxis stroke="#64748B" fontSize={10} tickLine={false} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#070b16",
-                  borderColor: "rgba(255, 255, 255, 0.1)",
+                  backgroundColor: "#FFFFFF",
+                  borderColor: "#E2E8F0",
                   borderRadius: "12px",
                   fontSize: "11px",
                   fontFamily: "monospace",
-                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.6)",
+                  color: "#1E293B",
+                  boxShadow: "0 10px 25px -4px rgba(66, 91, 154, 0.15)",
                 }}
               />
               <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace", paddingTop: "8px" }} />
@@ -72,24 +73,24 @@ export function BatteryChart({ schedule }: BatteryChartProps) {
                 type="monotone"
                 dataKey="soc"
                 name="Battery SoC (kWh)"
-                stroke="#00f0ff"
+                stroke="#425B9A"
                 strokeWidth={2.5}
                 dot={false}
               />
               <Line
                 type="step"
                 dataKey="charge"
-                name="Charge (kW)"
-                stroke="#38bdf8"
-                strokeWidth={1.5}
+                name="Charge Power (kW)"
+                stroke="#76C0EC"
+                strokeWidth={1.8}
                 dot={false}
               />
               <Line
                 type="step"
                 dataKey="discharge"
-                name="Discharge (kW)"
-                stroke="#f43f5e"
-                strokeWidth={1.5}
+                name="Discharge Power (kW)"
+                stroke="#FF95A5"
+                strokeWidth={2}
                 dot={false}
               />
             </LineChart>

@@ -34,19 +34,19 @@ export function DemandChart({ schedule }: DemandChartProps) {
         }));
 
   return (
-    <Card className="bento-card border-white/[0.08] hover:border-cyan-400/30 h-full flex flex-col justify-between">
+    <Card className="bento-card border-slate-200/90 hover:border-[#425B9A]/30 h-full flex flex-col justify-between">
       <CardHeader className="p-6 pb-2">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <CardTitle className="flex items-center gap-2 text-sm font-semibold text-white">
-              <Activity className="h-4 w-4 text-cyan-400" />
+            <CardTitle className="flex items-center gap-2 text-sm font-bold text-[#425B9A]">
+              <Activity className="h-4 w-4 text-[#425B9A]" />
               <span>Campus Demand vs. Grid Import</span>
             </CardTitle>
-            <CardDescription className="text-xs text-slate-400">
-              Hourly 24-hour curve comparing campus load against energy purchased from the utility grid.
+            <CardDescription className="text-xs text-slate-500">
+              Hourly comparison between gross campus energy demand and grid import.
             </CardDescription>
           </div>
-          <span className="text-[10px] font-mono text-cyan-400/80 bg-cyan-950/40 border border-cyan-500/20 px-2 py-0.5 rounded-md hidden sm:inline-block">
+          <span className="text-[10px] font-mono text-[#425B9A] bg-[#425B9A]/10 border border-[#425B9A]/20 px-2 py-0.5 rounded-md hidden sm:inline-block font-bold">
             24h Profile
           </span>
         </div>
@@ -56,26 +56,27 @@ export function DemandChart({ schedule }: DemandChartProps) {
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
-                <linearGradient id="bentoDemandGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.35} />
-                  <stop offset="95%" stopColor="#38bdf8" stopOpacity={0} />
+                <linearGradient id="lightDemandGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#76C0EC" stopOpacity={0.45} />
+                  <stop offset="95%" stopColor="#76C0EC" stopOpacity={0.05} />
                 </linearGradient>
-                <linearGradient id="bentoGridGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#00f0ff" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#00f0ff" stopOpacity={0} />
+                <linearGradient id="lightGridGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#425B9A" stopOpacity={0.35} />
+                  <stop offset="95%" stopColor="#425B9A" stopOpacity={0.02} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-              <XAxis dataKey="hour" stroke="#64748b" fontSize={10} tickLine={false} />
-              <YAxis stroke="#64748b" fontSize={10} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+              <XAxis dataKey="hour" stroke="#64748B" fontSize={10} tickLine={false} />
+              <YAxis stroke="#64748B" fontSize={10} tickLine={false} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#070b16",
-                  borderColor: "rgba(255, 255, 255, 0.1)",
+                  backgroundColor: "#FFFFFF",
+                  borderColor: "#E2E8F0",
                   borderRadius: "12px",
                   fontSize: "11px",
                   fontFamily: "monospace",
-                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.6)",
+                  color: "#1E293B",
+                  boxShadow: "0 10px 25px -4px rgba(66, 91, 154, 0.15)",
                 }}
               />
               <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace", paddingTop: "8px" }} />
@@ -83,19 +84,19 @@ export function DemandChart({ schedule }: DemandChartProps) {
                 type="monotone"
                 dataKey="demand"
                 name="Gross Demand (kWh)"
-                stroke="#38bdf8"
+                stroke="#76C0EC"
                 strokeWidth={2}
                 fillOpacity={1}
-                fill="url(#bentoDemandGrad)"
+                fill="url(#lightDemandGrad)"
               />
               <Area
                 type="monotone"
                 dataKey="grid"
                 name="Grid Dispatched (kWh)"
-                stroke="#00f0ff"
-                strokeWidth={2}
+                stroke="#425B9A"
+                strokeWidth={2.5}
                 fillOpacity={1}
-                fill="url(#bentoGridGrad)"
+                fill="url(#lightGridGrad)"
               />
             </AreaChart>
           </ResponsiveContainer>
