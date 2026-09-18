@@ -9,11 +9,11 @@ interface PageContainerProps {
 
 export function PageContainer({ children, title }: PageContainerProps) {
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC] text-[#1E293B] font-sans antialiased selection:bg-[#76C0EC]/30 selection:text-[#425B9A]">
+    <div className="flex min-h-screen bg-canvas font-sans text-ink antialiased">
       <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex min-w-0 flex-1 flex-col">
         <Header title={title} />
-        <main className="flex-1 p-5 sm:p-7 max-w-[1480px] w-full mx-auto space-y-6">
+        <main className="mx-auto w-full max-w-[1480px] flex-1 space-y-6 p-5 sm:p-7">
           {children}
         </main>
       </div>

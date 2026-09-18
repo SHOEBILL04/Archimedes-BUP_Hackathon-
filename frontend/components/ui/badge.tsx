@@ -1,31 +1,39 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
+export type BadgeVariant =
+  | "default"
+  | "brand"
+  | "accent"
+  | "cream"
+  | "coral"
+  | "neutral"
+  | "outline";
+
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "indigo" | "sky" | "cream" | "coral" | "secondary" | "outline" | "success" | "warning";
+  variant?: BadgeVariant;
 }
 
-function Badge({
-  className,
-  variant = "default",
-  ...props
-}: BadgeProps) {
-  const variantStyles = {
-    default: "bg-[#425B9A]/10 text-[#425B9A] border-[#425B9A]/20 font-semibold",
-    indigo: "bg-[#425B9A]/10 text-[#425B9A] border-[#425B9A]/25 font-semibold",
-    sky: "bg-[#76C0EC]/20 text-[#254b7c] border-[#76C0EC]/40 font-semibold",
-    cream: "bg-[#FFF6DC] text-[#78590c] border-[#f5e4ab] font-semibold",
-    coral: "bg-[#FF95A5]/25 text-[#b91c38] border-[#FF95A5]/45 font-bold",
-    secondary: "bg-slate-100 text-slate-700 border-slate-200",
-    outline: "text-slate-600 border-slate-200 bg-white",
-    success: "bg-emerald-50 text-emerald-700 border-emerald-200 font-semibold",
-    warning: "bg-amber-50 text-amber-800 border-amber-200 font-semibold",
-  };
+/**
+ * Every badge pairs a pastel/tinted surface with its matching ink, keeping all
+ * combinations above 4.5:1. The four brand hues cover the full semantic range,
+ * so no off-palette success/warning colors are introduced.
+ */
+const variantStyles: Record<BadgeVariant, string> = {
+  default: "bg-brand-50 text-brand border-brand/20 font-semibold",
+  brand: "bg-brand-50 text-brand border-brand/25 font-semibold",
+  accent: "bg-accent-100 text-accent-ink border-accent/40 font-semibold",
+  cream: "bg-cream text-cream-ink border-cream-ink/25 font-semibold",
+  coral: "bg-coral-50 text-coral-ink border-coral/50 font-bold",
+  neutral: "bg-canvas text-ink-muted border-line font-medium",
+  outline: "bg-surface text-ink-muted border-line font-medium",
+};
 
+function Badge({ className, variant = "default", ...props }: BadgeProps) {
   return (
     <div
       className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-medium tracking-tight transition-colors",
+        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] tracking-tight transition-colors",
         variantStyles[variant],
         className
       )}
