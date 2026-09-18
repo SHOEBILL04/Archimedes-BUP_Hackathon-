@@ -19,24 +19,24 @@ export default function DashboardPage() {
   return (
     <PageContainer title="Optimizer Workbench">
       {/* Header Banner */}
-      <div className="bento-card p-6 border-slate-200/90 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bento-card p-6 border-[rgba(28,49,46,0.08)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <h1 className="text-xl font-bold text-[#0F172A] tracking-tight flex items-center gap-2">
-              <Sliders className="h-5 w-5 text-emerald-600" />
+            <h1 className="text-xl font-bold text-[#1C312E] tracking-tight flex items-center gap-2">
+              <Sliders className="h-5 w-5 text-[#4E8773]" />
               <span>Energy Optimization Workbench</span>
             </h1>
-            <Badge variant="emerald" className="font-mono text-[10px]">
+            <Badge variant="sage" className="font-mono text-[10px]">
               PuLP Engine
             </Badge>
           </div>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-[#6E8480]">
             Interactive dispatch tuning, operator directives simulation, and constraint feasibility audit.
           </p>
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-mono font-bold text-slate-800 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl w-fit shadow-2xs">
-          <Cpu className="h-3.5 w-3.5 text-slate-600" />
+        <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#1C312E] bg-[#E8EFE9] border border-[rgba(28,49,46,0.12)] px-3.5 py-2 rounded-xl w-fit shadow-2xs">
+          <Cpu className="h-3.5 w-3.5 text-[#4E8773]" />
           <span>Solver: COIN-OR CBC (Linear Program)</span>
         </div>
       </div>

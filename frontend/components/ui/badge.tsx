@@ -4,18 +4,17 @@ import { cn } from "@/lib/utils";
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?:
     | "default"
+    | "sage"
+    | "copper"
+    | "slate"
+    | "mist"
     | "emerald"
     | "cyan"
     | "amber"
     | "indigo"
     | "coral"
-    | "slate"
     | "hero"
     | "hero-cyan"
-    | "sky"
-    | "cream"
-    | "success"
-    | "warning"
     | "secondary"
     | "outline";
 }
@@ -26,22 +25,23 @@ function Badge({
   ...props
 }: BadgeProps) {
   const variantStyles = {
-    default: "bg-slate-100 text-slate-800 border-slate-200 font-semibold",
-    emerald: "bg-emerald-50 text-emerald-700 border-emerald-200/80 font-semibold",
-    cyan: "bg-sky-50 text-sky-700 border-sky-200/80 font-semibold",
-    amber: "bg-amber-50 text-amber-800 border-amber-200/80 font-semibold",
-    indigo: "bg-indigo-50 text-indigo-700 border-indigo-200/80 font-semibold",
-    coral: "bg-rose-50 text-rose-700 border-rose-200/80 font-semibold",
-    slate: "bg-slate-100 text-slate-700 border-slate-200 font-semibold",
-    hero: "bg-emerald-400/15 text-emerald-300 border-emerald-400/30 font-semibold backdrop-blur-xs",
-    "hero-cyan": "bg-sky-400/15 text-sky-300 border-sky-400/30 font-semibold backdrop-blur-xs",
+    default: "bg-[#E8EFE9] text-[#1C312E] border-[rgba(28,49,46,0.14)] font-semibold",
+    // Solar & Optimum Status (Sage Green on Cool Mist)
+    sage: "bg-[#E8EFE9] text-[#4E8773] border-[#4E8773]/30 font-semibold",
+    // Battery Discharge / Limit Warning (Terracotta / Earthy Copper)
+    copper: "bg-[#D97757]/12 text-[#D97757] border-[#D97757]/30 font-semibold",
+    slate: "bg-[#1C312E]/08 text-[#1C312E] border-[#1C312E]/15 font-semibold",
+    mist: "bg-[#E8EFE9] text-[#1C312E] border-[rgba(28,49,46,0.14)] font-semibold",
     // Compatibility aliases
-    sky: "bg-sky-50 text-sky-700 border-sky-200/80 font-semibold",
-    cream: "bg-amber-50 text-amber-800 border-amber-200/80 font-semibold",
-    success: "bg-emerald-50 text-emerald-700 border-emerald-200/80 font-semibold",
-    warning: "bg-amber-50 text-amber-800 border-amber-200/80 font-semibold",
-    secondary: "bg-slate-100 text-slate-700 border-slate-200",
-    outline: "text-slate-600 border-slate-200 bg-white",
+    emerald: "bg-[#E8EFE9] text-[#4E8773] border-[#4E8773]/30 font-semibold",
+    cyan: "bg-[#E8EFE9] text-[#4E8773] border-[#4E8773]/25 font-semibold",
+    amber: "bg-[#D97757]/12 text-[#D97757] border-[#D97757]/30 font-semibold",
+    indigo: "bg-[#1C312E]/08 text-[#1C312E] border-[#1C312E]/15 font-semibold",
+    coral: "bg-[#D97757]/12 text-[#D97757] border-[#D97757]/30 font-semibold",
+    hero: "bg-[#E8EFE9] text-[#4E8773] border-[#4E8773]/30 font-semibold",
+    "hero-cyan": "bg-[#D97757]/12 text-[#D97757] border-[#D97757]/30 font-semibold",
+    secondary: "bg-[#F4F7F4] text-[#1C312E] border-[rgba(28,49,46,0.08)]",
+    outline: "text-[#1C312E] border-[rgba(28,49,46,0.15)] bg-white",
   };
 
   return (

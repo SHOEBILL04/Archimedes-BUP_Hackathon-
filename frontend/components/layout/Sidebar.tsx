@@ -4,7 +4,6 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Zap,
   LayoutDashboard,
   Sliders,
   FileText,
@@ -13,6 +12,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ArchimedesIcon } from "./ArchimedesLogo";
 
 const NAV_ITEMS = [
   {
@@ -37,26 +37,33 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 border-r border-slate-200/90 bg-white flex flex-col justify-between shrink-0 min-h-screen">
+    <aside className="w-64 border-r border-[rgba(28,49,46,0.08)] bg-white flex flex-col justify-between shrink-0 min-h-screen">
       <div>
-        {/* Brand Header */}
-        <div className="h-16 flex items-center gap-3 px-6 border-b border-slate-100">
-          <div className="h-9 w-9 rounded-xl bg-[#0F172A] flex items-center justify-center shadow-xs text-white font-bold">
-            <Zap className="h-5 w-5 fill-[#10B981] text-[#10B981]" />
+        {/* Brand Header with Archimedean Balance */}
+        <div className="h-18 flex items-center gap-3 px-5 border-b border-[rgba(28,49,46,0.06)]">
+          <div className="h-10 w-10 shrink-0">
+            <ArchimedesIcon className="h-full w-full" />
           </div>
-          <div>
-            <h1 className="text-sm font-bold text-[#0F172A] tracking-tight flex items-center gap-1.5">
-              <span>GridWise</span>
-              <span className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-1.5 py-0.2 rounded-md font-mono font-semibold">LLM</span>
-            </h1>
-            <p className="text-[11px] text-slate-500 font-mono">Smart Campus Energy</p>
+          <div className="min-w-0">
+            <div className="flex items-center gap-1.5">
+              <span className="text-base font-extrabold text-[#1C312E] tracking-tight">
+                Archimedes
+              </span>
+              <span className="h-1.5 w-1.5 rounded-full bg-[#D97757]" />
+              <span className="text-[10px] bg-[#E8EFE9] text-[#1C312E] border border-[rgba(28,49,46,0.1)] px-1.5 py-0.2 rounded font-mono font-bold">
+                LP
+              </span>
+            </div>
+            <p className="text-[9px] font-mono font-bold text-[#4E8773] tracking-widest truncate">
+              SMART ENERGY EQUILIBRIUM
+            </p>
           </div>
         </div>
 
         {/* Navigation Items */}
         <nav className="p-4 space-y-1.5">
-          <div className="px-3 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider font-mono">
-            Navigation
+          <div className="px-3 py-2 text-[10px] font-bold text-[#6E8480] uppercase tracking-wider font-mono">
+            Platform Navigation
           </div>
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
@@ -71,21 +78,21 @@ export function Sidebar() {
                 className={cn(
                   "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 group",
                   isActive
-                    ? "bg-[#0F172A] text-white shadow-xs"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                    ? "bg-[#E8EFE9] text-[#1C312E] shadow-2xs border-l-2 border-[#4E8773]"
+                    : "text-[#4A635E] hover:text-[#1C312E] hover:bg-[#F4F7F4]"
                 )}
               >
                 <Icon
                   className={cn(
                     "h-4 w-4 transition-colors",
                     isActive
-                      ? "text-[#10B981]"
-                      : "text-slate-400 group-hover:text-slate-700"
+                      ? "text-[#4E8773]"
+                      : "text-[#6E8480] group-hover:text-[#1C312E]"
                   )}
                 />
                 <span>{item.label}</span>
                 {item.external && (
-                  <ExternalLink className="ml-auto h-3 w-3 text-slate-400 group-hover:text-slate-600" />
+                  <ExternalLink className="ml-auto h-3 w-3 text-[#6E8480] group-hover:text-[#1C312E]" />
                 )}
               </Link>
             );
@@ -93,21 +100,21 @@ export function Sidebar() {
         </nav>
       </div>
 
-      {/* Clean Modern System Status Card */}
-      <div className="p-4 m-4 rounded-2xl border border-slate-200 bg-slate-50/80 text-slate-800 shadow-2xs">
+      {/* Cool Mist System Equilibrium Card */}
+      <div className="p-4 m-4 rounded-2xl border border-[rgba(28,49,46,0.12)] bg-[#E8EFE9] text-[#1C312E] shadow-2xs">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2">
-            <Cpu className="h-4 w-4 text-slate-700" />
-            <span className="text-xs font-bold text-[#0F172A]">PuLP / CBC Engine</span>
+            <Cpu className="h-4 w-4 text-[#1C312E]" />
+            <span className="text-xs font-bold text-[#1C312E]">Equilibrium Engine</span>
           </div>
-          <span className="flex h-2 w-2 rounded-full bg-[#10B981] ring-4 ring-[#10B981]/25 animate-pulse" />
+          <span className="flex h-2 w-2 rounded-full bg-[#4E8773] ring-4 ring-[#4E8773]/25 animate-pulse" />
         </div>
-        <p className="text-[11px] text-slate-500 mb-3 leading-relaxed">
-          Deterministic linear dispatch & replay verification active.
+        <p className="text-[11px] text-[#4A635E] mb-3 leading-relaxed">
+          PuLP/CBC linear dispatch balancing solar generation and storage arbitrage.
         </p>
-        <div className="flex items-center gap-2 text-[11px] text-emerald-700 font-mono font-bold">
-          <Activity className="h-3.5 w-3.5 text-emerald-600" />
-          <span>Optimal & Feasible</span>
+        <div className="flex items-center gap-2 text-[11px] text-[#4E8773] font-mono font-bold">
+          <Activity className="h-3.5 w-3.5 text-[#4E8773]" />
+          <span>Optimal & Verified</span>
         </div>
       </div>
     </aside>

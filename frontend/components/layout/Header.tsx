@@ -35,10 +35,10 @@ export function Header({
   }, []);
 
   return (
-    <header className="h-16 border-b border-slate-200/90 bg-white/90 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-20">
+    <header className="h-16 border-b border-[rgba(28,49,46,0.08)] bg-white/90 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-20">
       <div className="flex items-center gap-3">
-        <h2 className="text-sm font-bold text-[#0F172A] tracking-tight">{title}</h2>
-        <Badge variant="emerald" className="font-mono text-[10px] hidden sm:inline-flex">
+        <h2 className="text-sm font-bold text-[#1C312E] tracking-tight">{title}</h2>
+        <Badge variant="sage" className="font-mono text-[10px] hidden sm:inline-flex">
           BUP CSE Fest 2026
         </Badge>
       </div>
@@ -47,28 +47,28 @@ export function Header({
         {/* API Health indicator */}
         <div className="flex items-center gap-2">
           {healthStatus === "ok" ? (
-            <Badge variant="emerald" className="flex items-center gap-1.5 py-1 px-3">
-              <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-              <span className="font-mono text-[11px] text-emerald-800">API 200 OK</span>
+            <Badge variant="sage" className="flex items-center gap-1.5 py-1 px-3">
+              <span className="flex h-1.5 w-1.5 rounded-full bg-[#4E8773] animate-pulse" />
+              <CheckCircle2 className="h-3.5 w-3.5 text-[#4E8773]" />
+              <span className="font-mono text-[11px] text-[#1C312E]">API 200 OK</span>
             </Badge>
           ) : healthStatus === "checking" ? (
             <Badge variant="secondary" className="flex items-center gap-1.5 py-1 px-3 font-mono text-[11px]">
-              <RefreshCw className="h-3.5 w-3.5 animate-spin text-slate-500" />
+              <RefreshCw className="h-3.5 w-3.5 animate-spin text-[#6E8480]" />
               <span>Connecting...</span>
             </Badge>
           ) : (
-            <Badge variant="coral" className="flex items-center gap-1.5 py-1 px-3 font-mono text-[11px]">
-              <AlertCircle className="h-3.5 w-3.5" />
+            <Badge variant="copper" className="flex items-center gap-1.5 py-1 px-3 font-mono text-[11px]">
+              <AlertCircle className="h-3.5 w-3.5 text-[#D97757]" />
               <span>API Offline (:8000)</span>
             </Badge>
           )}
         </div>
 
-        <div className="h-4 w-[1px] bg-slate-200 hidden sm:block" />
+        <div className="h-4 w-[1px] bg-[rgba(28,49,46,0.1)] hidden sm:block" />
 
-        <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 font-mono">
-          <Terminal className="h-3.5 w-3.5 text-slate-700" />
+        <div className="hidden sm:flex items-center gap-1.5 text-xs text-[#6E8480] font-mono">
+          <Terminal className="h-3.5 w-3.5 text-[#1C312E]" />
           <span>CBC Solver</span>
         </div>
       </div>
