@@ -63,7 +63,7 @@ export default function HomePage() {
 
               <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
                 Smart Campus Energy <br className="hidden sm:inline" />
-                <span className="text-emerald-600">Optimization Platform</span>
+                <span className="text-emerald-700">Optimization Platform</span>
               </h1>
 
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-2xl font-normal">
@@ -73,7 +73,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 mt-4">
+            <div className="pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-200/70 mt-4">
               <div className="flex flex-wrap items-center gap-4 text-xs font-mono font-medium text-slate-600">
                 <div className="flex items-center gap-1.5 text-emerald-600">
                   <Zap className="h-3.5 w-3.5" />
