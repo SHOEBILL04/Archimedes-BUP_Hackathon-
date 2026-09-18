@@ -15,12 +15,32 @@ import { Badge } from "@/components/ui/badge";
 import { Sparkles, Zap, Cpu, ShieldCheck, ArrowRight, Activity } from "lucide-react";
 import Link from "next/link";
 import { formatCurrencyBDT } from "@/lib/utils";
+import { DEFAULT_SAMPLE_SCENARIO } from "@/lib/constants";
+import { apiClient } from "@/lib/api/client";
 
 export default function HomePage() {
   const [optimizationResult, setOptimizationResult] =
     useState<OptimizationResponse | null>(null);
 
-  const totalCost = optimizationResult?.total_grid_cost_bdt ?? 9852.0;
+  React.useEffect(() => {
+    let isMounted = true;
+    apiClient
+      .optimizeEnergy(DEFAULT_SAMPLE_SCENARIO)
+      .then((res) => {
+        if (isMounted) setOptimizationResult(res);
+      })
+      .catch(() => {
+        // Backend offline or error, gracefully keep null
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const totalCost =
+    optimizationResult?.total_grid_cost_bdt ??
+    (optimizationResult as unknown as { total_cost_bdt?: number })?.total_cost_bdt ??
+    null;
 
   return (
     <PageContainer title="Overview & Bento Console">
@@ -93,18 +113,28 @@ export default function HomePage() {
             <div className="my-auto py-3">
               <span className="text-[11px] font-mono font-semibold text-slate-500 block mb-1">Total Grid Tariff</span>
               <h3 className="text-3xl sm:text-4xl font-extrabold font-mono text-[#0F172A] tracking-tight">
-                {formatCurrencyBDT(totalCost)}
+                {totalCost !== null ? formatCurrencyBDT(totalCost) : "—"}
               </h3>
               <p className="text-[11px] text-slate-500 mt-2 font-mono">
-                Evaluated across 24 hourly time-of-use bins
+                {totalCost !== null
+                  ? "Evaluated across 24 hourly time-of-use bins"
+                  : "Click Run Optimization to evaluate"}
               </p>
             </div>
 
             <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono">
               <span className="text-slate-500">Physical Balance:</span>
-              <span className="text-emerald-700 font-bold flex items-center gap-1">
+              <span
+                className={`font-bold flex items-center gap-1 ${
+                  optimizationResult ? "text-emerald-700" : "text-slate-500"
+                }`}
+              >
                 <Activity className="h-3 w-3 text-emerald-600" />
-                Feasible & Verified
+                {optimizationResult
+                  ? optimizationResult.verification?.verified !== false
+                    ? "Feasible & Verified"
+                    : "Validation Warning"
+                  : "Awaiting Run"}
               </span>
             </div>
           </Card>

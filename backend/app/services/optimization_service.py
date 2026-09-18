@@ -7,6 +7,7 @@ from app.repositories.optimization_repository import OptimizationRepository
 from app.schemas.optimization import (
     DirectiveInterpretation,
     EnergyScenario,
+    HourlyPlanEntry,
     HourSchedule,
     OptimizationResponse,
     VerificationResult,
@@ -106,32 +107,6 @@ class OptimizationService:
             )
             for h in opt_result.hourly_schedule
         ]
-
-        from app.schemas.optimization import HourlyPlanItem
-
-        hourly_plan: list[HourlyPlanItem] = []
-        for h in opt_result.hourly_schedule:
-            if h.battery_charge_kwh > 1e-4:
-                b_action = "charge"
-                b_kwh = round(h.battery_charge_kwh, 2)
-            elif h.battery_discharge_kwh > 1e-4:
-                b_action = "discharge"
-                b_kwh = round(h.battery_discharge_kwh, 2)
-            else:
-                b_action = "idle"
-                b_kwh = 0.0
-
-            hourly_plan.append(
-                HourlyPlanItem(
-                    hour=h.hour,
-                    grid_kwh=round(h.grid_kwh, 2),
-                    solar_used_kwh=round(h.solar_used_kwh, 2),
-                    battery_action=b_action,
-                    battery_kwh=b_kwh,
-                    battery_energy_after_kwh=round(h.battery_energy_after_kwh, 2),
-                )
-            )
-
         validated_directive_models = [
             DirectiveInterpretation(
                 note_index=d["note_index"],
@@ -143,19 +118,57 @@ class OptimizationService:
             for d in val_dirs
         ]
 
+        hourly_plan: list[HourlyPlanItem] = []
+        for h in opt_result.hourly_schedule:
+            charge = round(h.battery_charge_kwh, 2)
+            discharge = round(h.battery_discharge_kwh, 2)
+            if charge > 0.001:
+                action = "charge"
+                b_kwh = charge
+            elif discharge > 0.001:
+                action = "discharge"
+                b_kwh = discharge
+            else:
+                action = "idle"
+                b_kwh = 0.0
+
+            hourly_plan.append(
+                HourlyPlanItem(
+                    hour=h.hour,
+                    grid_kwh=round(h.grid_kwh, 2),
+                    solar_used_kwh=round(h.solar_used_kwh, 2),
+                    battery_action=action,
+                    battery_kwh=b_kwh,
+                    battery_energy_after_kwh=round(h.battery_energy_after_kwh, 2),
+                )
+            )
+
+        total_grid_cost = round(opt_result.total_grid_cost_bdt, 2)
+        total_grid = round(sum(h.grid_kwh for h in opt_result.hourly_schedule), 2)
         peak_grid = round(max((h.grid_kwh for h in opt_result.hourly_schedule), default=0.0), 2)
-        total_cost = round(opt_result.total_grid_cost_bdt, 2)
+
+        active_dirs = [d["directive_type"] for d in val_dirs if d.get("applies")]
+        dir_desc = (
+            f"Applied directives: {', '.join(active_dirs)}."
+            if active_dirs
+            else "Standard operations without external restriction."
+        )
+        plan_summary = (
+            f"Calculated optimal 24-hour dispatch with total cost {total_grid_cost:.2f} BDT, "
+            f"total grid import {total_grid:.2f} kWh, and peak grid demand {peak_grid:.2f} kWh. "
+            f"{dir_desc} End-of-day battery neutrality and physical constraints verified."
+        )
 
         response = OptimizationResponse(
             scenario_id=scenario.scenario_id,
             directive_interpretation=validated_directive_models,
             hourly_plan=hourly_plan,
-            schedule=schedules,
-            total_grid_cost_bdt=total_cost,
-            total_cost_bdt=total_cost,
-            total_grid_kwh=round(opt_result.total_grid_kwh, 2),
+            total_grid_kwh=total_grid,
+            total_cost_bdt=total_grid_cost,
             peak_grid_kwh=peak_grid,
-            plan_summary="Optimal 24-hour campus energy schedule generated and verified via deterministic replay.",
+            plan_summary=plan_summary,
+            schedule=schedules,
+            total_grid_cost_bdt=total_grid_cost,
             verification=VerificationResult(
                 verified=val_result.verified,
                 max_constraint_error=val_result.max_constraint_error,

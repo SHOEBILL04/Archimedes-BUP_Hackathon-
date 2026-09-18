@@ -188,8 +188,9 @@ def optimize(
     ]
 
     # 3. Objective: Minimize total grid electricity purchasing cost
+    # A microscopic penalty on battery flow eliminates zero-cost simultaneous charge/discharge degeneracy
     problem += pulp.lpSum(
-        grid[h] * tariff[h]
+        grid[h] * tariff[h] + 1e-5 * (charge[h] + discharge[h])
         for h in range(HOURS_IN_DAY)
     ), "MinimizeTotalGridCost"
 
@@ -248,9 +249,8 @@ def optimize(
     logger.info("LP solver terminated with status: %s", status_str)
 
     if status_str != "Optimal":
-        raise InfeasibleError(
-            f"Optimization failed to find an optimal solution. Solver status: {status_str}"
-        )
+        logger.warning("Optimization failed to find an optimal solution. Status: %s", status_str)
+        raise InfeasibleError(f"Optimization problem infeasible or unbounded (status: {status_str})")
 
     # 7. Extract solution values and construct response
     hourly_schedule: list[HourResult] = []
@@ -264,6 +264,19 @@ def optimize(
         c = _clean_val(pulp.value(charge[h]))
         d = _clean_val(pulp.value(discharge[h]))
         e = _clean_val(pulp.value(energy_after[h]))
+
+        # Cancel any simultaneous charge and discharge floating-point degeneracy
+        net_b = c - d
+        if net_b > EPS:
+            c = net_b
+            d = 0.0
+        elif net_b < -EPS:
+            c = 0.0
+            d = -net_b
+        else:
+            c = 0.0
+            d = 0.0
+
         cost = g * tariff[h]
 
         total_grid_kwh += g

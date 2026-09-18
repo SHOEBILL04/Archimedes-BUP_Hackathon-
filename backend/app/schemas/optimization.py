@@ -62,24 +62,39 @@ class ScenarioHour(BaseModel):
     tariff_bdt_per_kwh: float = Field(ge=0)
 
 
+HourlyEnergyInput = ScenarioHour
+
+
 class EnergyScenario(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
-    scenario_id: str | None = Field(default=None, description="Scenario ID from judge test pack")
+    scenario_id: str | None = Field(default="SCENARIO-01", description="Scenario identifier")
     hours: list[ScenarioHour] | None = Field(default=None, description="24 hourly entries")
     demand_kwh: list[float] | None = Field(
-        default=None, min_length=HOURS, max_length=HOURS, description="24 hourly demand values in kWh"
+        default=None, description="24 hourly demand values in kWh"
     )
     base_solar_kwh: list[float] | None = Field(
-        default=None, min_length=HOURS, max_length=HOURS, description="24 hourly baseline solar values in kWh"
+        default=None, description="24 hourly baseline solar values in kWh"
     )
     tariff_bdt_per_kwh: list[float] | None = Field(
-        default=None, min_length=HOURS, max_length=HOURS, description="24 hourly grid tariffs in BDT/kWh"
+        default=None, description="24 hourly grid tariffs in BDT/kWh"
     )
-    battery: BatteryParameters
     operator_notes: list[str] = Field(
         min_length=1, max_length=3, description="1 to 3 operator natural language notes"
     )
+    battery: BatteryParameters
+
+    @field_validator("operator_notes")
+    @classmethod
+    def validate_notes(cls, notes: list[str]) -> list[str]:
+        cleaned: list[str] = []
+        for note in notes:
+            if not isinstance(note, str) or not note.strip():
+                raise ValueError("operator notes must be non-empty strings")
+            if len(note) > 2000:
+                raise ValueError("each operator note must be at most 2000 characters")
+            cleaned.append(note.strip())
+        return cleaned
 
     @model_validator(mode="before")
     @classmethod
@@ -88,7 +103,10 @@ class EnergyScenario(BaseModel):
             raw_hours = data["hours"]
             if len(raw_hours) != HOURS:
                 raise ValueError(f"hours must have exactly {HOURS} elements")
-            sorted_hours = sorted(raw_hours, key=lambda x: x.get("hour", 0) if isinstance(x, dict) else x.hour)
+            sorted_hours = sorted(
+                raw_hours,
+                key=lambda x: x.get("hour", 0) if isinstance(x, dict) else getattr(x, "hour", 0),
+            )
             demand = []
             solar = []
             tariff = []
@@ -105,28 +123,45 @@ class EnergyScenario(BaseModel):
             data["base_solar_kwh"] = solar
             data["tariff_bdt_per_kwh"] = tariff
         elif isinstance(data, dict):
-            if data.get("demand_kwh") is None or data.get("base_solar_kwh") is None or data.get("tariff_bdt_per_kwh") is None:
-                raise ValueError("Must provide either 'hours' (24 items) or 'demand_kwh', 'base_solar_kwh', 'tariff_bdt_per_kwh' (24 floats each)")
+            if (
+                data.get("demand_kwh") is None
+                or data.get("base_solar_kwh") is None
+                or data.get("tariff_bdt_per_kwh") is None
+            ):
+                raise ValueError(
+                    "Must provide either 'hours' (24 items) or 'demand_kwh', 'base_solar_kwh', 'tariff_bdt_per_kwh' (24 floats each)"
+                )
         return data
 
-    @field_validator("demand_kwh", "base_solar_kwh", "tariff_bdt_per_kwh")
-    @classmethod
-    def validate_arrays(cls, values: list[float] | None) -> list[float] | None:
-        if values is None:
-            return None
-        return [_finite_nonnegative(v) for v in values]
+    @model_validator(mode="after")
+    def validate_and_populate_arrays(self) -> EnergyScenario:
+        if (
+            self.demand_kwh is None
+            or self.base_solar_kwh is None
+            or self.tariff_bdt_per_kwh is None
+        ):
+            raise ValueError("Hourly demand, solar, and tariff arrays must be populated")
+        if (
+            len(self.demand_kwh) != HOURS
+            or len(self.base_solar_kwh) != HOURS
+            or len(self.tariff_bdt_per_kwh) != HOURS
+        ):
+            raise ValueError(f"Hourly arrays must each have exactly {HOURS} elements")
+        self.demand_kwh = [_finite_nonnegative(v) for v in self.demand_kwh]
+        self.base_solar_kwh = [_finite_nonnegative(v) for v in self.base_solar_kwh]
+        self.tariff_bdt_per_kwh = [_finite_nonnegative(v) for v in self.tariff_bdt_per_kwh]
 
-    @field_validator("operator_notes")
-    @classmethod
-    def validate_notes(cls, notes: list[str]) -> list[str]:
-        cleaned: list[str] = []
-        for note in notes:
-            if not isinstance(note, str) or not note.strip():
-                raise ValueError("operator notes must be non-empty strings")
-            if len(note) > 2000:
-                raise ValueError("each operator note must be at most 2000 characters")
-            cleaned.append(note.strip())
-        return cleaned
+        if self.hours is None:
+            self.hours = [
+                ScenarioHour(
+                    hour=i,
+                    demand_kwh=self.demand_kwh[i],
+                    solar_kwh=self.base_solar_kwh[i],
+                    tariff_bdt_per_kwh=self.tariff_bdt_per_kwh[i],
+                )
+                for i in range(HOURS)
+            ]
+        return self
 
 
 class DirectiveInterpretation(BaseModel):
@@ -136,28 +171,7 @@ class DirectiveInterpretation(BaseModel):
     applies: bool = True
     directive_type: DirectiveType
     structured_adjustment: dict[str, Any] | None = None
-    explanation: str | None = None
-
-
-class DirectiveInterpretationResponse(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-
-    interpretations: list[DirectiveInterpretation] = Field(min_length=1, max_length=3)
-
-
-class HourSchedule(BaseModel):
-    model_config = ConfigDict(extra="ignore")
-
-    hour: int = Field(ge=0, le=23)
-    demand_kwh: float = Field(ge=0)
-    effective_solar_kwh: float = Field(ge=0)
-    solar_used_kwh: float = Field(ge=0)
-    battery_charge_kwh: float = Field(ge=0)
-    battery_discharge_kwh: float = Field(ge=0)
-    battery_energy_after_kwh: float = Field(ge=0)
-    grid_kwh: float = Field(ge=0)
-    tariff_bdt_per_kwh: float = Field(ge=0)
-    grid_cost_bdt: float = Field(ge=0)
+    explanation: str = Field(default="")
 
 
 class HourlyPlanItem(BaseModel):
@@ -171,27 +185,60 @@ class HourlyPlanItem(BaseModel):
     battery_energy_after_kwh: float = Field(ge=0)
 
 
-class VerificationResult(BaseModel):
-    model_config = ConfigDict(extra="ignore")
+HourlyPlanEntry = HourlyPlanItem
 
-    verified: bool = Field(default=True)
-    max_constraint_error: float = Field(ge=0, default=0.0)
+
+class HourlyScheduleOutput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    hour: int = Field(ge=0, le=23)
+    demand_kwh: float = Field(ge=0)
+    effective_solar_kwh: float = Field(ge=0)
+    solar_used_kwh: float = Field(ge=0)
+    battery_charge_kwh: float = Field(ge=0)
+    battery_discharge_kwh: float = Field(ge=0)
+    battery_energy_after_kwh: float = Field(ge=0)
+    grid_kwh: float = Field(ge=0)
+    tariff_bdt_per_kwh: float = Field(ge=0)
+    grid_cost_bdt: float = Field(ge=0)
+
+
+class VerificationResult(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    verified: bool = True
+    max_constraint_error: float = Field(ge=0)
     total_grid_cost_bdt: float = Field(ge=0)
 
 
 class OptimizationResponse(BaseModel):
     model_config = ConfigDict(extra="ignore")
 
-    scenario_id: str | None = None
-    directive_interpretation: list[DirectiveInterpretation]
-    hourly_plan: list[HourlyPlanItem] | None = None
-    schedule: list[HourSchedule] = Field(min_length=HOURS, max_length=HOURS)
-    total_grid_cost_bdt: float = Field(ge=0)
-    total_cost_bdt: float | None = Field(default=None, ge=0)
-    total_grid_kwh: float = Field(ge=0)
-    peak_grid_kwh: float | None = Field(default=None, ge=0)
-    plan_summary: str | None = None
-    verification: VerificationResult
+    # Official Judge Top-Level Canonical Fields (Section 10)
+    scenario_id: str | None = Field(default=None, description="Identifier of the scenario.")
+    directive_interpretation: list[DirectiveInterpretation] = Field(
+        ..., description="List of structured interpretations for each operator note."
+    )
+    hourly_plan: list[HourlyPlanItem] = Field(
+        default_factory=list, description="24-hour canonical hourly dispatch plan."
+    )
+    total_grid_kwh: float = Field(..., description="Total grid energy purchased (kWh).")
+    total_cost_bdt: float = Field(..., description="Total grid energy cost (BDT).")
+    peak_grid_kwh: float = Field(default=0.0, description="Peak hourly grid energy purchase (kWh).")
+    plan_summary: str = Field(
+        default="", description="Human-readable summary of the dispatch schedule."
+    )
+
+    # Legacy / UI Dashboard Fields (preserved for backward compatibility with frontend)
+    schedule: list[HourlyScheduleOutput] = Field(
+        default_factory=list, description="Detailed hourly schedule for dashboard visualization."
+    )
+    total_grid_cost_bdt: float = Field(
+        default=0.0, description="Alias for total_cost_bdt for UI compatibility."
+    )
+    verification: VerificationResult | None = Field(
+        default=None, description="Deterministic replay verification summary."
+    )
     status_message: str = Field(
-        default="Optimal energy dispatch computed and verified via deterministic replay."
+        default="Optimization completed successfully.", description="Status message."
     )

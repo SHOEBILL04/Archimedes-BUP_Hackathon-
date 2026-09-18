@@ -10,12 +10,15 @@ interface OptimizationSummaryProps {
 }
 
 export function OptimizationSummary({ result }: OptimizationSummaryProps) {
-  const totalCost = result?.total_grid_cost_bdt ?? 9852.0;
-  const totalGridKwh = result?.total_grid_kwh ?? 840.5;
+  const hasResult = Boolean(result);
+  const totalCost = result?.total_grid_cost_bdt ?? (result as unknown as { total_cost_bdt?: number })?.total_cost_bdt ?? null;
+  const totalGridKwh = result?.total_grid_kwh ?? null;
   const isVerified = result?.verification?.verified ?? true;
   const totalSolarUsed = result?.schedule
     ? result.schedule.reduce((acc, curr) => acc + curr.solar_used_kwh, 0)
-    : 320.0;
+    : (result as unknown as { hourly_plan?: Array<{ solar_used_kwh: number }> })?.hourly_plan
+    ? (result as unknown as { hourly_plan: Array<{ solar_used_kwh: number }> }).hourly_plan.reduce((acc, curr) => acc + curr.solar_used_kwh, 0)
+    : null;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -32,11 +35,11 @@ export function OptimizationSummary({ result }: OptimizationSummaryProps) {
           </div>
           <div>
             <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0F172A]">
-              {formatCurrencyBDT(totalCost)}
+              {totalCost !== null ? formatCurrencyBDT(totalCost) : "—"}
             </div>
             <div className="flex items-center gap-1.5 mt-2 text-[11px] text-emerald-700 font-mono font-semibold">
               <ArrowUpRight className="h-3 w-3 text-emerald-600" />
-              <span>Optimized with PuLP solver</span>
+              <span>{hasResult ? "Optimized with PuLP solver" : "Ready to optimize"}</span>
             </div>
           </div>
         </CardContent>
@@ -55,8 +58,10 @@ export function OptimizationSummary({ result }: OptimizationSummaryProps) {
           </div>
           <div>
             <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0F172A] flex items-baseline gap-1.5">
-              <span>{formatNumber(totalGridKwh, 1)}</span>
-              <span className="text-xs font-mono font-normal text-slate-500">kWh</span>
+              <span>{totalGridKwh !== null ? formatNumber(totalGridKwh, 1) : "—"}</span>
+              {totalGridKwh !== null && (
+                <span className="text-xs font-mono font-normal text-slate-500">kWh</span>
+              )}
             </div>
             <div className="flex items-center gap-1.5 mt-2 text-[11px] text-slate-500 font-mono">
               <span>24-hr cumulative import</span>
@@ -78,8 +83,10 @@ export function OptimizationSummary({ result }: OptimizationSummaryProps) {
           </div>
           <div>
             <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-[#0F172A] flex items-baseline gap-1.5">
-              <span>{formatNumber(totalSolarUsed, 1)}</span>
-              <span className="text-xs font-mono font-normal text-slate-500">kWh</span>
+              <span>{totalSolarUsed !== null ? formatNumber(totalSolarUsed, 1) : "—"}</span>
+              {totalSolarUsed !== null && (
+                <span className="text-xs font-mono font-normal text-slate-500">kWh</span>
+              )}
             </div>
             <div className="flex items-center gap-1.5 mt-2 text-[11px] text-emerald-700 font-mono font-semibold">
               <span>Zero-carbon self-consumption</span>
@@ -102,10 +109,14 @@ export function OptimizationSummary({ result }: OptimizationSummaryProps) {
           <div>
             <div>
               <Badge
-                variant={isVerified ? "emerald" : "coral"}
+                variant={!hasResult ? "secondary" : isVerified ? "emerald" : "coral"}
                 className="font-mono text-[11px] px-2.5 py-1"
               >
-                {isVerified ? "Verified Feasible (0.000 error)" : "Validation Warning"}
+                {!hasResult
+                  ? "Awaiting Run"
+                  : isVerified
+                  ? "Verified Feasible (0.000 error)"
+                  : "Validation Warning"}
               </Badge>
             </div>
             <div className="flex items-center gap-1.5 mt-3 text-[11px] text-slate-500 font-mono">

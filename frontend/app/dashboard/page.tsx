@@ -13,9 +13,27 @@ import { OptimizationResponse } from "@/types/energy";
 import { Sliders, Cpu } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
+import { DEFAULT_SAMPLE_SCENARIO } from "@/lib/constants";
+import { apiClient } from "@/lib/api/client";
+
 export default function DashboardPage() {
   const [optimizationResult, setOptimizationResult] =
     useState<OptimizationResponse | null>(null);
+
+  React.useEffect(() => {
+    let isMounted = true;
+    apiClient
+      .optimizeEnergy(DEFAULT_SAMPLE_SCENARIO)
+      .then((res) => {
+        if (isMounted) setOptimizationResult(res);
+      })
+      .catch(() => {
+        // Backend offline or error, gracefully keep null
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <PageContainer title="Optimizer Workbench">

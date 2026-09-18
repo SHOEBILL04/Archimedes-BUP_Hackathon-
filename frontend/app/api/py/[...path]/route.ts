@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
+export const maxDuration = 60;
+
 function getBackendUrl(): string {
   const raw =
     process.env.NEXT_PUBLIC_API_URL ||
