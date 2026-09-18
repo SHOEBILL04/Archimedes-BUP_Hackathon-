@@ -2,7 +2,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "secondary" | "outline" | "success" | "warning";
+  variant?: "default" | "indigo" | "sky" | "cream" | "coral" | "secondary" | "outline" | "success" | "warning";
 }
 
 function Badge({
@@ -11,17 +11,21 @@ function Badge({
   ...props
 }: BadgeProps) {
   const variantStyles = {
-    default: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
-    secondary: "bg-slate-800 text-slate-300 border-slate-700",
-    outline: "text-slate-300 border-slate-700",
-    success: "bg-teal-500/15 text-teal-300 border-teal-500/30",
-    warning: "bg-amber-500/15 text-amber-300 border-amber-500/30",
+    default: "bg-[#425B9A]/10 text-[#425B9A] border-[#425B9A]/20 font-semibold",
+    indigo: "bg-[#425B9A]/10 text-[#425B9A] border-[#425B9A]/25 font-semibold",
+    sky: "bg-[#76C0EC]/20 text-[#254b7c] border-[#76C0EC]/40 font-semibold",
+    cream: "bg-[#FFF6DC] text-[#78590c] border-[#f5e4ab] font-semibold",
+    coral: "bg-[#FF95A5]/25 text-[#b91c38] border-[#FF95A5]/45 font-bold",
+    secondary: "bg-slate-100 text-slate-700 border-slate-200",
+    outline: "text-slate-600 border-slate-200 bg-white",
+    success: "bg-emerald-50 text-emerald-700 border-emerald-200 font-semibold",
+    warning: "bg-amber-50 text-amber-800 border-amber-200 font-semibold",
   };
 
   return (
     <div
       className={cn(
-        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors",
+        "inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-medium tracking-tight transition-colors",
         variantStyles[variant],
         className
       )}
