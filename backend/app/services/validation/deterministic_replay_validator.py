@@ -70,6 +70,7 @@ class DeterministicReplayValidator(IReplayValidator):
         schedule: list[HourlyScheduleOutput] | list[Any],
         reported_total_cost: float,
         tolerance: float | None = None,
+        enforce_eod_neutrality: bool | None = None,
         strict: bool = False,
     ) -> ReplayValidationResult:
         """Perform comprehensive independent replay audit on a candidate dispatch schedule.
@@ -79,6 +80,7 @@ class DeterministicReplayValidator(IReplayValidator):
             schedule: Candidate 24-hour schedule to audit.
             reported_total_cost: Total grid electricity cost reported by the solver.
             tolerance: Numerical tolerance threshold (defaults to self.default_tolerance).
+            enforce_eod_neutrality: Whether to check end-of-day battery neutrality.
             strict: If True, raises ReplayValidationError on first set of violations.
 
         Returns:
@@ -88,6 +90,11 @@ class DeterministicReplayValidator(IReplayValidator):
             ReplayValidationError: If strict=True and one or more violations occur.
         """
         tol = tolerance if tolerance is not None else self.default_tolerance
+        eod_neutral = (
+            enforce_eod_neutrality
+            if enforce_eod_neutrality is not None
+            else self.enforce_eod_neutrality
+        )
         violations: list[str] = []
         max_error: float = 0.0
 
@@ -289,7 +296,7 @@ class DeterministicReplayValidator(IReplayValidator):
             previous_energy = energy_after
 
         # ── CHECK 10: END OF DAY BATTERY LEVEL ──
-        if self.enforce_eod_neutrality:
+        if eod_neutral:
             final_energy = previous_energy
             initial_energy = battery.initial_energy_kwh
             eod_err = abs(final_energy - initial_energy)

@@ -6,6 +6,12 @@ from this package only. Direct access to PuLP or internal solver routines is pro
 
 from __future__ import annotations
 
+from app.services.optimizer.engine import (
+    OptimizationEngine,
+    OptimizationPipelineInput,
+    OptimizationPipelineResult,
+    optimize_and_validate,
+)
 from app.services.optimizer.exceptions import (
     OptimizationInfeasibleError,
     OptimizationTimeoutError,
@@ -49,9 +55,12 @@ __all__ = [
     "HourlyScheduleOutput",
     "InfeasibleError",
     "NormalizedDirective",
+    "OptimizationEngine",
     "OptimizationError",
     "OptimizationInfeasibleError",
     "OptimizationInput",
+    "OptimizationPipelineInput",
+    "OptimizationPipelineResult",
     "OptimizationResult",
     "OptimizationTimeoutError",
     "PuLpEnergyOptimizer",
@@ -61,7 +70,8 @@ __all__ = [
     "SolverStatus",
     # Interfaces
     "IOptimizer",
-    # Functions
+    # Functions & Engines
     "optimize",
+    "optimize_and_validate",
     "run_optimization",
 ]
