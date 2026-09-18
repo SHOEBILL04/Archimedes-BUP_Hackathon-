@@ -37,8 +37,8 @@ export function Header({
   return (
     <header className="h-16 border-b border-slate-200/90 bg-white/90 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-20">
       <div className="flex items-center gap-3">
-        <h2 className="text-sm font-bold text-[#425B9A] tracking-tight">{title}</h2>
-        <Badge variant="cream" className="font-mono text-[10px] hidden sm:inline-flex">
+        <h2 className="text-sm font-bold text-[#0F172A] tracking-tight">{title}</h2>
+        <Badge variant="emerald" className="font-mono text-[10px] hidden sm:inline-flex">
           BUP CSE Fest 2026
         </Badge>
       </div>
@@ -47,10 +47,10 @@ export function Header({
         {/* API Health indicator */}
         <div className="flex items-center gap-2">
           {healthStatus === "ok" ? (
-            <Badge variant="sky" className="flex items-center gap-1.5 py-1 px-3">
-              <span className="flex h-1.5 w-1.5 rounded-full bg-[#425B9A] animate-pulse" />
-              <CheckCircle2 className="h-3.5 w-3.5 text-[#425B9A]" />
-              <span className="font-mono text-[11px] text-[#425B9A]">API 200 OK</span>
+            <Badge variant="emerald" className="flex items-center gap-1.5 py-1 px-3">
+              <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+              <span className="font-mono text-[11px] text-emerald-800">API 200 OK</span>
             </Badge>
           ) : healthStatus === "checking" ? (
             <Badge variant="secondary" className="flex items-center gap-1.5 py-1 px-3 font-mono text-[11px]">
@@ -68,7 +68,7 @@ export function Header({
         <div className="h-4 w-[1px] bg-slate-200 hidden sm:block" />
 
         <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 font-mono">
-          <Terminal className="h-3.5 w-3.5 text-[#425B9A]" />
+          <Terminal className="h-3.5 w-3.5 text-slate-700" />
           <span>CBC Solver</span>
         </div>
       </div>

@@ -23,46 +23,46 @@ export default function HomePage() {
 
   return (
     <PageContainer title="Overview & Bento Console">
-      {/* 12-Column Asymmetric Bento Grid Architecture in Clean Light Theme */}
+      {/* 12-Column Asymmetric Bento Grid Architecture in Clean-Tech Theme */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5">
         
-        {/* Bento Cell 1: Hero Focus Card (Soft Warm Cream Accent Background #FFF6DC) */}
+        {/* Bento Cell 1: Hero Command Console (Modern, Cool, and Classical Midnight Slate) */}
         <div className="md:col-span-2 lg:col-span-8">
-          <div className="bento-card bento-card-warm p-7 relative overflow-hidden h-full flex flex-col justify-between border-[#f5e4ab] hover:border-[#425B9A]/40 group">
+          <div className="bento-hero p-7 relative overflow-hidden h-full flex flex-col justify-between group">
             <div className="space-y-3">
               <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="indigo" className="font-mono gap-1.5 px-3 py-1">
-                  <Sparkles className="h-3 w-3" />
+                <Badge variant="hero" className="font-mono gap-1.5 px-3 py-1">
+                  <Sparkles className="h-3 w-3 text-emerald-400" />
                   <span>BUP CSE Fest 2026 Challenge</span>
                 </Badge>
-                <Badge variant="coral" className="font-mono text-[10px]">
-                  Archimedes Platform
+                <Badge variant="hero-cyan" className="font-mono text-[10px]">
+                  GridWise LLM Engine
                 </Badge>
               </div>
 
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#425B9A] tracking-tight leading-tight">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-tight">
                 Smart Campus Energy <br className="hidden sm:inline" />
-                <span className="text-[#1E293B]">Optimization Platform</span>
+                <span className="text-emerald-400">Optimization Platform</span>
               </h1>
 
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed max-w-2xl font-medium">
+              <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl font-normal">
                 Multi-stage dispatch system coupling natural language operator directives with
                 deterministic physical guardrails and PuLP/CBC linear programming to minimize
                 grid electricity tariffs while guaranteeing battery longevity.
               </p>
             </div>
 
-            <div className="pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-[#f5e4ab]/80 mt-4">
-              <div className="flex flex-wrap items-center gap-4 text-xs font-mono font-semibold text-slate-600">
-                <div className="flex items-center gap-1.5 text-[#425B9A]">
+            <div className="pt-6 flex flex-wrap items-center justify-between gap-4 border-t border-slate-700/60 mt-4">
+              <div className="flex flex-wrap items-center gap-4 text-xs font-mono font-medium text-slate-300">
+                <div className="flex items-center gap-1.5 text-emerald-400">
                   <Zap className="h-3.5 w-3.5" />
                   <span>LP Solver</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[#254b7c]">
-                  <ShieldCheck className="h-3.5 w-3.5 text-[#76C0EC]" />
+                <div className="flex items-center gap-1.5 text-sky-400">
+                  <ShieldCheck className="h-3.5 w-3.5" />
                   <span>Replay Validator</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[#78590c]">
+                <div className="flex items-center gap-1.5 text-amber-400">
                   <Cpu className="h-3.5 w-3.5" />
                   <span>LLM Guardrails</span>
                 </div>
@@ -70,7 +70,7 @@ export default function HomePage() {
 
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#425B9A] hover:text-[#314474] transition-colors group/link font-mono"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors group/link font-mono"
               >
                 <span>Full Workbench</span>
                 <ArrowRight className="h-3.5 w-3.5 group-hover/link:translate-x-1 transition-transform" />
@@ -81,17 +81,17 @@ export default function HomePage() {
 
         {/* Bento Cell 2: Primary Cost KPI Spotlight Card */}
         <div className="md:col-span-2 lg:col-span-4">
-          <Card className="bento-card p-6 h-full flex flex-col justify-between border-slate-200/90 hover:border-[#425B9A]/30 group">
+          <Card className="bento-card p-6 h-full flex flex-col justify-between group">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-mono font-bold text-slate-500 uppercase tracking-wider">
                 Objective Function Value
               </span>
-              <span className="h-2.5 w-2.5 rounded-full bg-[#76C0EC] ring-4 ring-[#76C0EC]/30" />
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20" />
             </div>
 
             <div className="my-auto py-3">
-              <span className="text-[11px] font-mono font-bold text-[#425B9A] block mb-1">Total Grid Tariff</span>
-              <h3 className="text-3xl sm:text-4xl font-extrabold font-mono text-[#1E293B] tracking-tight">
+              <span className="text-[11px] font-mono font-semibold text-slate-500 block mb-1">Total Grid Tariff</span>
+              <h3 className="text-3xl sm:text-4xl font-extrabold font-mono text-[#0F172A] tracking-tight">
                 {formatCurrencyBDT(totalCost)}
               </h3>
               <p className="text-[11px] text-slate-500 mt-2 font-mono">
@@ -101,8 +101,8 @@ export default function HomePage() {
 
             <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] font-mono">
               <span className="text-slate-500">Physical Balance:</span>
-              <span className="text-[#425B9A] font-bold flex items-center gap-1">
-                <Activity className="h-3 w-3 text-[#76C0EC]" />
+              <span className="text-emerald-700 font-bold flex items-center gap-1">
+                <Activity className="h-3 w-3 text-emerald-600" />
                 Feasible & Verified
               </span>
             </div>
