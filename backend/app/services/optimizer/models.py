@@ -134,6 +134,8 @@ class BatteryConfig:
     minimum_energy_kwh: float
     max_charge_kwh_per_hour: float
     max_discharge_kwh_per_hour: float
+    charge_efficiency: float = 1.0
+    discharge_efficiency: float = 1.0
 
     def __post_init__(self) -> None:
         for field_name, value in [
@@ -142,6 +144,8 @@ class BatteryConfig:
             ("minimum_energy_kwh", self.minimum_energy_kwh),
             ("max_charge_kwh_per_hour", self.max_charge_kwh_per_hour),
             ("max_discharge_kwh_per_hour", self.max_discharge_kwh_per_hour),
+            ("charge_efficiency", self.charge_efficiency),
+            ("discharge_efficiency", self.discharge_efficiency),
         ]:
             if (
                 not isinstance(value, (int, float))
@@ -168,6 +172,14 @@ class BatteryConfig:
             raise ValueError(
                 f"max_discharge_kwh_per_hour must be non-negative, got {self.max_discharge_kwh_per_hour}"
             )
+        if not (0.0 < self.charge_efficiency <= 1.0):
+            raise ValueError(
+                f"charge_efficiency must be in (0.0, 1.0], got {self.charge_efficiency}"
+            )
+        if not (0.0 < self.discharge_efficiency <= 1.0):
+            raise ValueError(
+                f"discharge_efficiency must be in (0.0, 1.0], got {self.discharge_efficiency}"
+            )
 
         # Boundary relationships
         if self.initial_energy_kwh > self.capacity_kwh:
@@ -182,6 +194,11 @@ class BatteryConfig:
             raise ValueError(
                 f"initial_energy_kwh ({self.initial_energy_kwh}) cannot be below minimum_energy_kwh ({self.minimum_energy_kwh})"
             )
+
+    @property
+    def efficiency(self) -> float:
+        """Round-trip battery efficiency."""
+        return self.charge_efficiency * self.discharge_efficiency
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -404,10 +421,35 @@ class OptimizationResult:
     execution_time_seconds: float = 0.0
 
     def __post_init__(self) -> None:
-        if len(self.schedule) != HOURS_IN_DAY:
+        if self.solver_status in (SolverStatus.OPTIMAL, SolverStatus.FEASIBLE):
+            if len(self.schedule) != HOURS_IN_DAY:
+                raise ValueError(
+                    f"schedule must contain exactly {HOURS_IN_DAY} entries, got {len(self.schedule)}"
+                )
+        elif len(self.schedule) not in (0, HOURS_IN_DAY):
             raise ValueError(
-                f"schedule must contain exactly {HOURS_IN_DAY} entries, got {len(self.schedule)}"
+                f"Failed schedule must be empty or contain {HOURS_IN_DAY} entries, got {len(self.schedule)}"
             )
+
+    @property
+    def is_optimal(self) -> bool:
+        """Return True if solver found an optimal solution."""
+        return self.solver_status == SolverStatus.OPTIMAL
+
+    @property
+    def is_feasible(self) -> bool:
+        """Return True if solver found an optimal or feasible solution."""
+        return self.solver_status in (SolverStatus.OPTIMAL, SolverStatus.FEASIBLE)
+
+    @property
+    def total_cost(self) -> float:
+        """Alias for total_grid_cost_bdt."""
+        return self.total_grid_cost_bdt
+
+    @property
+    def status(self) -> SolverStatus:
+        """Alias for solver_status."""
+        return self.solver_status
 
 
 # ─────────────────────────────────────────────────────────────────────────────

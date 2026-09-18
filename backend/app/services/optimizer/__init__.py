@@ -33,6 +33,7 @@ from app.services.optimizer.models import (
     SolverStatus,
 )
 from app.services.optimizer.optimizer_service import run_optimization
+from app.services.optimizer.pulp_solver import PuLpEnergyOptimizer, optimize
 from app.services.optimizer.solver import EnergyOptimizer
 
 __all__ = [
@@ -53,12 +54,14 @@ __all__ = [
     "OptimizationInput",
     "OptimizationResult",
     "OptimizationTimeoutError",
+    "PuLpEnergyOptimizer",
     "SUPPORTED_DIRECTIVE_TYPES",
     "SolverError",
     "SolverExecutionError",
     "SolverStatus",
     # Interfaces
     "IOptimizer",
-    # Legacy Run Entrypoint
+    # Functions
+    "optimize",
     "run_optimization",
 ]
