@@ -13,9 +13,16 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Smart Campus Energy Optimization Platform | Archimedes",
+  title: "Archimedes | Smart Campus Energy Optimization Platform",
   description:
     "Production-grade 24-hour energy optimization platform combining PuLP/CBC Linear Programming with deterministic guardrails and LLM operator directive interpretation for BUP CSE Fest 2026.",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -28,7 +35,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#F8FAFC] text-[#1E293B]">{children}</body>
+      <body className="min-h-full flex flex-col bg-[#F8FAFC] text-[#0F172A]">{children}</body>
     </html>
   );
 }
