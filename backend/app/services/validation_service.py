@@ -7,31 +7,50 @@ from app.schemas.optimization import (
     HourSchedule,
     VerificationResult,
 )
+from app.services.validation.compiler import compile_directives
+from app.services.validation.guardrails import validate_directives
+from app.services.validation.models import CompiledDirectives
+from app.services.validation.replay import replay_validate
 
 
 class ValidationService:
-    """Service interface for deterministic guardrails and replay validation.
+    """Production service facade providing deterministic guardrails and replay validation.
 
-    NOTE: This is a scaffold placeholder. The mathematical balance check,
-    battery bounds replay, and directive guardrails will be implemented in the next phase.
+    Delegates to specialized modular engines:
+      - validate_directives: sanitizes untrusted LLM directives against physical boundaries
+      - replay_validate_schedule: verifies 24-hour dispatch schedule against hourly physical equations
     """
 
     def validate_directives(
         self, scenario: EnergyScenario, directives: list[DirectiveInterpretation]
     ) -> list[DirectiveInterpretation]:
         """Validate LLM directives against physical boundaries before solver execution."""
-        logger.info("ValidationService.validate_directives called (PLACEHOLDER)")
-        return directives
+        logger.info(
+            "ValidationService.validate_directives invoked with %d directives", len(directives)
+        )
+        return validate_directives(scenario, directives)
 
     def replay_validate_schedule(
-        self, scenario: EnergyScenario, schedule: list[HourSchedule]
+        self,
+        scenario: EnergyScenario,
+        schedule: list[HourSchedule],
+        directives: list[DirectiveInterpretation] | None = None,
+        compiled_directives: CompiledDirectives | None = None,
     ) -> VerificationResult:
-        """Replay-simulate the schedule hour-by-hour to ensure zero physical constraint violations."""
-        logger.info("ValidationService.replay_validate_schedule called (PLACEHOLDER)")
+        """Replay-simulate the schedule hour-by-hour to guarantee zero physical constraint violations."""
+        logger.info("ValidationService.replay_validate_schedule invoked for 24-hour schedule")
+
+        if compiled_directives is None:
+            if directives is not None:
+                compiled_directives = compile_directives(scenario, directives)
+            else:
+                # Default baseline (no applied directives)
+                compiled_directives = compile_directives(scenario, [])
 
         total_cost = sum(entry.grid_cost_bdt for entry in schedule)
-        return VerificationResult(
-            verified=True,
-            max_constraint_error=0.0,
-            total_grid_cost_bdt=round(total_cost, 2),
+        return replay_validate(
+            scenario=scenario,
+            directives=compiled_directives,
+            schedule=schedule,
+            reported_total_cost=total_cost,
         )
