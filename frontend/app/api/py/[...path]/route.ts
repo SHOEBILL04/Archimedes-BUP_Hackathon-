@@ -1,15 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "") ||
-  "https://archimedes-energy-backend.onrender.com";
+function getBackendUrl(): string {
+  const raw =
+    process.env.NEXT_PUBLIC_API_URL ||
+    "https://archimedes-energy-backend.onrender.com";
+  const trimmed = raw.trim().replace(/\/+$/, "");
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return trimmed;
+  }
+  return `https://${trimmed}`;
+}
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ path: string[] }> }
 ) {
   const { path } = await params;
-  const targetUrl = `${BACKEND_URL}/${path.join("/")}${request.nextUrl.search}`;
+  const backendUrl = getBackendUrl();
+  const targetUrl = `${backendUrl}/${path.join("/")}${request.nextUrl.search}`;
   try {
     const res = await fetch(targetUrl, {
       cache: "no-store",
@@ -35,7 +43,8 @@ export async function POST(
   { params }: { params: Promise<{ path: string[] }> }
 ) {
   const { path } = await params;
-  const targetUrl = `${BACKEND_URL}/${path.join("/")}`;
+  const backendUrl = getBackendUrl();
+  const targetUrl = `${backendUrl}/${path.join("/")}`;
   try {
     const body = await request.text();
     const res = await fetch(targetUrl, {
@@ -55,6 +64,9 @@ export async function POST(
     });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ status: "error", error: message }, { status: 502 });
+    return NextResponse.json(
+      { status: "error", error: message, detail: `Proxy error to ${targetUrl}: ${message}` },
+      { status: 502 }
+    );
   }
 }

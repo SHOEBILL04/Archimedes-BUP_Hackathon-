@@ -71,18 +71,25 @@ export const apiClient = {
         body: JSON.stringify(scenario),
       });
     } catch {
-      if (apiBase.startsWith("/")) {
-        try {
-          res = await fetch("https://archimedes-energy-backend.onrender.com/api/v1/optimize-energy", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(scenario),
-          });
-        } catch {
-          // both attempts failed
+      // Network error calling proxy
+    }
+
+    // If proxy failed, timed out, or returned 502, automatically fall back to direct backend
+    if ((!res || !res.ok) && apiBase.startsWith("/")) {
+      try {
+        const directRes = await fetch("https://archimedes-energy-backend.onrender.com/api/v1/optimize-energy", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(scenario),
+        });
+        if (directRes.ok) {
+          return await directRes.json();
         }
+        res = directRes;
+      } catch {
+        // Direct call failed or blocked
       }
     }
 
