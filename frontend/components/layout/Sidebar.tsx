@@ -67,7 +67,7 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 border-r border-slate-200/90 bg-white flex flex-col justify-between shrink-0 min-h-screen">
+    <aside className="w-64 border-r border-slate-200/90 bg-white flex flex-col justify-between shrink-0 h-screen sticky top-0 z-30 overflow-y-auto">
       <div>
         {/* Brand Header with Archimedean Balance */}
         <div className="h-18 flex items-center gap-3 px-5 border-b border-slate-100">
