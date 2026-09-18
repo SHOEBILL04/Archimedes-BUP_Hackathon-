@@ -12,7 +12,11 @@ from app.services.optimizer.models import (
     NormalizedDirective,
     ReplayValidationResult,
 )
-from app.services.validation.compiler import compile_directives
+from app.services.validation.compiler import (
+    DeterministicDirectiveCompiler,
+    compile_directives,
+    preprocess_directives,
+)
 from app.services.validation.directive_guardrail import (
     BatchDirectiveValidationResult,
     DeterministicDirectiveGuardrail,
@@ -52,7 +56,8 @@ __all__ = [
     "ReplayValidationResult",
     "SUPPORTED_DIRECTIVE_TYPES",
     "ValidationResult",
-    # Guardrails
+    # Guardrails & Compilers
+    "DeterministicDirectiveCompiler",
     "DeterministicDirectiveGuardrail",
     # Exceptions
     "GuardrailValidationError",
@@ -64,6 +69,7 @@ __all__ = [
     # Functions
     "compile_directives",
     "noop",
+    "preprocess_directives",
     "replay_validate",
     "replay_validate_schedule",
     "validate_and_raise",

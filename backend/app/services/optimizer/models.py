@@ -261,6 +261,7 @@ class CompiledDirectives:
     no_charge: list[bool]
     no_discharge: list[bool]
     max_grid: list[float | None]
+    conflicts: list[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         for name, arr in [
@@ -274,6 +275,18 @@ class CompiledDirectives:
             if len(arr) != HOURS_IN_DAY:
                 raise ValueError(f"{name} must have length {HOURS_IN_DAY}, got {len(arr)}")
 
+    def is_charge_allowed(self, hour: int) -> bool:
+        """Return whether charging is permitted in the given hour."""
+        return not self.no_charge[hour]
+
+    def is_discharge_allowed(self, hour: int) -> bool:
+        """Return whether discharging is permitted in the given hour."""
+        return not self.no_discharge[hour]
+
+    def has_battery_lock(self, hour: int) -> bool:
+        """Return whether both charging and discharging are prohibited in the given hour."""
+        return self.no_charge[hour] and self.no_discharge[hour]
+
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary representation."""
         return {
@@ -283,6 +296,7 @@ class CompiledDirectives:
             "no_charge": self.no_charge,
             "no_discharge": self.no_discharge,
             "max_grid": self.max_grid,
+            "conflicts": self.conflicts,
         }
 
 
