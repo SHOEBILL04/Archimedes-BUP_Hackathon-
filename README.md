@@ -1,6 +1,6 @@
 # Smart Campus Energy Optimization Platform
 
-Production-ready scaffold for the **BUP CSE Fest 2026 Smart Campus Energy Optimization Challenge**.
+Production-ready scaffold for the **Smart Campus Energy Optimization Platform**.
 
 The system accepts 24-hour campus energy telemetry (demand, baseline solar, time-of-use tariffs, and battery parameters) along with natural-language operator directives. It interprets operator directives via an LLM, validates them against deterministic guardrails, optimizes battery charging/discharging and solar/grid dispatch using Linear Programming (PuLP/CBC), replay-validates physical constraints, and surfaces actionable telemetry in a modern web dashboard.
 
