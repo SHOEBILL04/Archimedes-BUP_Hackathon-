@@ -14,25 +14,32 @@ export function Header({
     "checking"
   );
 
-  useEffect(() => {
-    let isMounted = true;
+  const verifyHealth = React.useCallback(() => {
+    setHealthStatus("checking");
     apiClient
       .checkHealth()
       .then((res) => {
-        if (isMounted) {
-          setHealthStatus(res.status === "ok" ? "ok" : "error");
-        }
+        setHealthStatus(res.status === "ok" ? "ok" : "error");
       })
       .catch(() => {
-        if (isMounted) {
-          setHealthStatus("error");
-        }
+        setHealthStatus("error");
       });
-
-    return () => {
-      isMounted = false;
-    };
   }, []);
+
+  useEffect(() => {
+    verifyHealth();
+
+    // Periodically poll every 10 seconds to detect when backend is awake
+    const interval = setInterval(() => {
+      apiClient.checkHealth().then((res) => {
+        if (res.status === "ok") {
+          setHealthStatus("ok");
+        }
+      }).catch(() => {});
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [verifyHealth]);
 
   return (
     <header className="h-16 border-b border-slate-200/90 bg-white/90 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-20">
@@ -47,7 +54,7 @@ export function Header({
         {/* API Health indicator */}
         <div className="flex items-center gap-2">
           {healthStatus === "ok" ? (
-            <Badge variant="emerald" className="flex items-center gap-1.5 py-1 px-3">
+            <Badge variant="emerald" className="flex items-center gap-1.5 py-1 px-3 select-none">
               <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
               <span className="font-mono text-[11px] text-emerald-800">API 200 OK</span>
@@ -58,10 +65,17 @@ export function Header({
               <span>Connecting...</span>
             </Badge>
           ) : (
-            <Badge variant="coral" className="flex items-center gap-1.5 py-1 px-3 font-mono text-[11px]">
-              <AlertCircle className="h-3.5 w-3.5" />
-              <span>API Offline (:8000)</span>
-            </Badge>
+            <button
+              type="button"
+              onClick={verifyHealth}
+              title="Click to re-check API connection"
+              className="focus:outline-none"
+            >
+              <Badge variant="coral" className="flex items-center gap-1.5 py-1 px-3 font-mono text-[11px] cursor-pointer hover:opacity-85 transition-opacity">
+                <AlertCircle className="h-3.5 w-3.5" />
+                <span>API Offline (Retry)</span>
+              </Badge>
+            </button>
           )}
         </div>
 

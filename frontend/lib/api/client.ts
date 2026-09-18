@@ -2,13 +2,28 @@ import { HealthStatusResponse } from "@/types/api";
 import { EnergyScenario, OptimizationResponse } from "@/types/energy";
 
 function resolveApiBase(): string {
-  const rawUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-  const trimmed = rawUrl.trim().replace(/\/+$/, "");
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
-    return trimmed;
+  const rawUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (rawUrl && rawUrl.trim()) {
+    const trimmed = rawUrl.trim().replace(/\/+$/, "");
+    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+      return trimmed;
+    }
+    return `https://${trimmed}`;
   }
-  // If Render or user provides a hostname without scheme, default to https
-  return `https://${trimmed}`;
+
+  // If in browser on any deployed domain (such as *.vercel.app)
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    if (host && host !== "localhost" && host !== "127.0.0.1" && host !== "0.0.0.0") {
+      return "https://archimedes-energy-backend.onrender.com";
+    }
+  }
+
+  if (process.env.NODE_ENV === "production") {
+    return "https://archimedes-energy-backend.onrender.com";
+  }
+
+  return "http://localhost:8000";
 }
 
 export const apiClient = {
