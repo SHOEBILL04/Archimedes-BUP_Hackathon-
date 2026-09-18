@@ -5,9 +5,11 @@ from sqlalchemy.orm import Session
 from app.core.logging import logger
 from app.repositories.optimization_repository import OptimizationRepository
 from app.schemas.optimization import (
+    DirectiveInterpretation,
     EnergyScenario,
     HourSchedule,
     OptimizationResponse,
+    VerificationResult,
 )
 from app.services.llm_service import LLMService
 from app.services.validation_service import ValidationService
@@ -36,63 +38,105 @@ class OptimizationService:
         """
         logger.info("OptimizationService.optimize called (SCAFFOLD PLACEHOLDER)")
 
-        # 1. LLM Directive Interpretation (Placeholder)
+        # 1. LLM Directive Interpretation
         directives = await self.llm_service.interpret_notes(scenario)
+        raw_directive_dicts = [d.model_dump() for d in directives]
 
-        # 2. Deterministic Guardrails (Placeholder)
-        validated_directives = self.validation_service.validate_directives(scenario, directives)
+        # 2. Battery specifications
+        from app.services.optimizer import BatteryInput, run_optimization
+        from app.services.optimizer.guardrails import compile_directives, validate_interpretations
+        from app.services.validation import ReplayValidationInput, replay_validate
 
-        # 3. Solver dispatch (Scaffold placeholder 24-hr schedule)
-        # Baseline deterministic logic: solar meets demand first, rest from grid, battery idle
-        schedules: list[HourSchedule] = []
-        total_grid_kwh = 0.0
-        total_grid_cost = 0.0
-
-        for h in range(24):
-            demand = scenario.demand_kwh[h]
-            solar = scenario.base_solar_kwh[h]
-            tariff = scenario.tariff_bdt_per_kwh[h]
-
-            solar_used = min(demand, solar)
-            grid_needed = max(0.0, demand - solar_used)
-            grid_cost = round(grid_needed * tariff, 2)
-
-            total_grid_kwh += grid_needed
-            total_grid_cost += grid_cost
-
-            schedules.append(
-                HourSchedule(
-                    hour=h,
-                    demand_kwh=round(demand, 2),
-                    effective_solar_kwh=round(solar, 2),
-                    solar_used_kwh=round(solar_used, 2),
-                    battery_charge_kwh=0.0,
-                    battery_discharge_kwh=0.0,
-                    battery_energy_after_kwh=round(scenario.battery.initial_energy_kwh, 2),
-                    grid_kwh=round(grid_needed, 2),
-                    tariff_bdt_per_kwh=round(tariff, 2),
-                    grid_cost_bdt=grid_cost,
-                )
-            )
-
-        # 4. Replay Validation (Placeholder)
-        verification = self.validation_service.replay_validate_schedule(scenario, schedules)
-
-        response = OptimizationResponse(
-            directive_interpretation=validated_directives,
-            schedule=schedules,
-            total_grid_cost_bdt=round(total_grid_cost, 2),
-            total_grid_kwh=round(total_grid_kwh, 2),
-            verification=verification,
-            status_message="[SCAFFOLD_PLACEHOLDER] Optimization pipeline scaffold response. Business logic will be implemented in next phase.",
+        battery_in = BatteryInput(
+            capacity_kwh=scenario.battery.capacity_kwh,
+            initial_energy_kwh=scenario.battery.initial_energy_kwh,
+            minimum_energy_kwh=scenario.battery.minimum_energy_kwh,
+            max_charge_kwh_per_hour=scenario.battery.max_charge_kwh_per_hour,
+            max_discharge_kwh_per_hour=scenario.battery.max_discharge_kwh_per_hour,
         )
 
-        # 5. Repository persistence into SQLite if DB session is supplied
+        # 3. Deterministic Guardrails & PuLP/CBC LP Solver Dispatch
+        opt_result = run_optimization(
+            demand=scenario.demand_kwh,
+            base_solar=scenario.base_solar_kwh,
+            tariff=scenario.tariff_bdt_per_kwh,
+            battery=battery_in,
+            raw_interpretations=raw_directive_dicts,
+            note_count=len(scenario.operator_notes),
+            solver_timeout_seconds=5.0,
+        )
+
+        # Validated directives for return payload
+        val_dirs = validate_interpretations(
+            raw_directive_dicts, len(scenario.operator_notes), battery_in.capacity_kwh
+        )
+        compiled = compile_directives(
+            val_dirs, scenario.base_solar_kwh, battery_in.capacity_kwh, battery_in.minimum_energy_kwh
+        )
+
+        # 4. Independent Deterministic Replay Validation
+        val_input = ReplayValidationInput(
+            demand=scenario.demand_kwh,
+            base_solar=scenario.base_solar_kwh,
+            tariff=scenario.tariff_bdt_per_kwh,
+            battery_capacity=battery_in.capacity_kwh,
+            battery_initial_energy=battery_in.initial_energy_kwh,
+            battery_min_energy=battery_in.minimum_energy_kwh,
+            battery_max_charge_per_hour=battery_in.max_charge_kwh_per_hour,
+            battery_max_discharge_per_hour=battery_in.max_discharge_kwh_per_hour,
+            compiled_directives=compiled,
+            schedule=opt_result.hourly_schedule,
+            reported_total_cost=opt_result.total_grid_cost_bdt,
+        )
+        val_result = replay_validate(val_input)
+
+        # 5. Format Hourly Schedules
+        schedules: list[HourSchedule] = [
+            HourSchedule(
+                hour=h.hour,
+                demand_kwh=round(h.demand_kwh, 2),
+                effective_solar_kwh=round(h.effective_solar_kwh, 2),
+                solar_used_kwh=round(h.solar_used_kwh, 2),
+                battery_charge_kwh=round(h.battery_charge_kwh, 2),
+                battery_discharge_kwh=round(h.battery_discharge_kwh, 2),
+                battery_energy_after_kwh=round(h.battery_energy_after_kwh, 2),
+                grid_kwh=round(h.grid_kwh, 2),
+                tariff_bdt_per_kwh=round(h.tariff_bdt_per_kwh, 2),
+                grid_cost_bdt=round(h.grid_cost_bdt, 2),
+            )
+            for h in opt_result.hourly_schedule
+        ]
+
+        validated_directive_models = [
+            DirectiveInterpretation(
+                note_index=d["note_index"],
+                directive_type=d["directive_type"],
+                structured_adjustment=d.get("structured_adjustment"),
+                applies=d.get("applies", False),
+            )
+            for d in val_dirs
+        ]
+
+
+        response = OptimizationResponse(
+            directive_interpretation=validated_directive_models,
+            schedule=schedules,
+            total_grid_cost_bdt=round(opt_result.total_grid_cost_bdt, 2),
+            total_grid_kwh=round(opt_result.total_grid_kwh, 2),
+            verification=VerificationResult(
+                verified=val_result.verified,
+                max_constraint_error=val_result.max_constraint_error,
+                total_grid_cost_bdt=round(val_result.recalculated_total_cost, 2),
+            ),
+            status_message="Optimal energy dispatch computed and verified via deterministic replay.",
+        )
+
+        # 6. Repository persistence into SQLite if DB session is supplied
         if db is not None and persist:
             try:
                 repo = OptimizationRepository(db)
                 repo.save_optimization_run(scenario, response)
-                logger.info("Saved scaffold optimization result into SQLite database")
+                logger.info("Saved optimization result into SQLite database")
             except Exception as e:
                 logger.warning("Could not persist optimization to database: %s", e)
 

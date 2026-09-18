@@ -56,6 +56,7 @@ htmlcov/
 .ruff_cache/
 
 # Node & Next.js
+!frontend/lib/
 frontend/node_modules/
 node_modules/
 npm-debug.log*

@@ -1,29 +1,88 @@
-"""Deterministic guardrail and replay-validation layer."""
+"""Independent Replay Validation Service Package.
+
+Exposes deterministic simulation and verification routines to audit candidate
+dispatch schedules against all physical equations and operational directives.
+"""
 
 from __future__ import annotations
 
-from .guardrails import SUPPORTED_DIRECTIVE_TYPES, normalize_directives
-from .models import DirectiveRejection, GuardrailReport, NormalizedDirectives
-from .physics import (
-    DEFAULT_CHARGE_EFFICIENCY,
-    DEFAULT_DISCHARGE_EFFICIENCY,
-    required_reserve_kwh,
+from app.services.optimizer.models import (
+    SUPPORTED_DIRECTIVE_TYPES,
+    DirectiveType,
+    NormalizedDirective,
+    ReplayValidationResult,
 )
-from .replay import TOLERANCE, ReplayValidationResult, ValidationIssue, replay_validate
-from .solar import apply_solar_directives
+from app.services.validation.compiler import (
+    DeterministicDirectiveCompiler,
+    compile_directives,
+    preprocess_directives,
+)
+from app.services.validation.deterministic_replay_validator import (
+    DeterministicReplayValidator,
+    replay_validate_dispatch,
+)
+from app.services.validation.directive_guardrail import (
+    BatchDirectiveValidationResult,
+    DeterministicDirectiveGuardrail,
+    DirectiveValidationErrorItem,
+    DirectiveValidationResult,
+    validate_directive,
+    validate_directive_batch,
+    validate_directive_batch_strict,
+    validate_directive_strict,
+)
+from app.services.validation.exceptions import GuardrailValidationError
+from app.services.validation.guardrails import noop, validate_directives, validate_interpretation
+from app.services.validation.interface import (
+    IDirectiveCompiler,
+    IDirectiveGuardrail,
+    IReplayValidator,
+)
+from app.services.validation.models import CompiledDirectives
+from app.services.validation.replay import replay_validate as replay_validate_schedule
+from app.services.validation.replay_validator import (
+    ReplayValidationError,
+    ReplayValidationInput,
+    ValidationResult,
+    replay_validate,
+    validate_and_raise,
+)
 
 __all__ = [
-    "DEFAULT_CHARGE_EFFICIENCY",
-    "DEFAULT_DISCHARGE_EFFICIENCY",
-    "SUPPORTED_DIRECTIVE_TYPES",
-    "TOLERANCE",
-    "DirectiveRejection",
-    "GuardrailReport",
-    "NormalizedDirectives",
+    # Domain Models & Types
+    "BatchDirectiveValidationResult",
+    "CompiledDirectives",
+    "DirectiveType",
+    "DirectiveValidationErrorItem",
+    "DirectiveValidationResult",
+    "NormalizedDirective",
+    "ReplayValidationInput",
     "ReplayValidationResult",
-    "ValidationIssue",
-    "apply_solar_directives",
-    "normalize_directives",
+    "SUPPORTED_DIRECTIVE_TYPES",
+    "ValidationResult",
+    # Guardrails & Compilers
+    "DeterministicDirectiveCompiler",
+    "DeterministicDirectiveGuardrail",
+    "DeterministicReplayValidator",
+    # Exceptions
+    "GuardrailValidationError",
+    "ReplayValidationError",
+    # Interfaces
+    "IDirectiveCompiler",
+    "IDirectiveGuardrail",
+    "IReplayValidator",
+    # Functions
+    "compile_directives",
+    "noop",
+    "preprocess_directives",
     "replay_validate",
-    "required_reserve_kwh",
+    "replay_validate_dispatch",
+    "replay_validate_schedule",
+    "validate_and_raise",
+    "validate_directive",
+    "validate_directive_batch",
+    "validate_directive_batch_strict",
+    "validate_directive_strict",
+    "validate_directives",
+    "validate_interpretation",
 ]

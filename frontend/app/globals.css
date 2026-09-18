@@ -1,205 +1,83 @@
 @import "tailwindcss";
 
-/* ============================================================================
-   ARCHIMEDES DESIGN SYSTEM — Modern Minimal Light Theme
-   ----------------------------------------------------------------------------
-   Single source of truth for the 4-color brand palette. Every component must
-   consume these tokens; no raw hex literals belong in TSX.
-
-   Core palette (exact, non-negotiable):
-     brand   #425B9A   Deep Indigo / Slate Blue  — primary, headers, CTA fills
-     accent  #76C0EC   Sky Blue                  — secondary, indicators, icons
-     cream   #FFF6DC   Soft Warm Cream           — hero + highlighted surfaces
-     coral   #FF95A5   Coral Rose                — attention, priority tags
-
-   Pastel accents (accent / cream / coral) sit at ~2:1 against white. They can
-   never carry small text, and they also fail WCAG 1.4.11 (3:1) as data-bearing
-   chart strokes. Each therefore ships an `-ink` variant derived at the SAME
-   hue, darkened until it clears AA (>= 4.5:1) on white.
-
-   The resulting rule, enforced throughout:
-     pastels  -> surfaces  (badge fills, card tints, area gradients)
-     inks     -> marks     (text, icons, chart strokes, borders that carry meaning)
-   This keeps the system to four hues while staying accessible.
-   ========================================================================== */
-
-@theme {
-  /* --- Primary / Core Brand — Deep Indigo ---------------------------------- */
-  --color-brand-50: #f1f4fa;
-  --color-brand-100: #e2e8f5;
-  --color-brand-200: #c5d0e8;
-  --color-brand-300: #93a6ce;
-  --color-brand-400: #6a82b8;
-  --color-brand: #425b9a; /* exact brand hex */
-  --color-brand-600: #374c81;
-  --color-brand-700: #2c3d68;
-  --color-brand-900: #1b2540;
-
-  /* --- Secondary / Vibrancy Accent — Sky Blue ------------------------------ */
-  --color-accent-50: #f0f8fe;
-  --color-accent-100: #e4f2fc;
-  --color-accent-200: #c6e5f8;
-  --color-accent: #76c0ec; /* exact accent hex */
-  --color-accent-600: #3e9fd4;
-  --color-accent-ink: #17698f; /* 6.08:1 on white — AA text/icon */
-
-  /* --- Warm Light Base — Soft Warm Cream ----------------------------------- */
-  --color-cream-50: #fffdf6;
-  --color-cream: #fff6dc; /* exact cream hex */
-  --color-cream-200: #fdefc6;
-  --color-cream-ink: #8a6700; /* 5.22:1 on white — AA warm/solar text */
-
-  /* --- Contrast Accent / Action Pop — Coral Rose --------------------------- */
-  --color-coral-50: #fff1f3;
-  --color-coral-100: #ffe4e8;
-  --color-coral: #ff95a5; /* exact coral hex */
-  --color-coral-600: #f26b80;
-  --color-coral-ink: #c43e58; /* 5.03:1 on white — AA text */
-
-  /* --- Harmonious light neutrals ------------------------------------------ */
-  --color-canvas: #f8fafc; /* main app background */
-  --color-surface: #ffffff; /* card / panel surface */
-  --color-line: #e2e8f0; /* borders & dividers */
-  --color-ink: #1e293b; /* body typography — 14.7:1 on white */
-  --color-ink-muted: #475569; /* secondary labels — 7.58:1, safe on cream */
-  --color-ink-subtle: #64748b; /* tertiary — 4.76:1 on white, AA only on white/canvas */
-
-  /* --- Radii: generous bento rounding (16–20px) ---------------------------- */
-  --radius-tile: 1rem; /* 16px */
-  --radius-bento: 1.25rem; /* 20px */
-
-  /* --- Soft, diffused elevation ------------------------------------------- */
-  --shadow-bento: 0 4px 20px -2px rgb(66 91 154 / 0.06);
-  --shadow-bento-hover: 0 10px 28px -4px rgb(66 91 154 / 0.12);
-  --shadow-tile: 0 1px 2px 0 rgb(66 91 154 / 0.05);
+:root {
+  --brand-slate: #0f172a;
+  --brand-navy: #1e293b;
+  --energy-emerald: #10b981;
+  --energy-emerald-dark: #059669;
+  --grid-cyan: #0ea5e9;
+  --grid-cyan-dark: #0284c7;
+  --solar-amber: #f59e0b;
+  --solar-amber-dark: #d97706;
+  --battery-indigo: #6366f1;
+  --flame-coral: #f43f5e;
+  --bg-main: #f8fafc;
+  --card-surface: #ffffff;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-subtle: #e2e8f0;
 }
 
-/* next/font variables resolved inline so `font-sans` / `font-mono` emit the
-   real family stack rather than an indirection Tailwind cannot statically read. */
-@theme inline {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+body {
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(ellipse 60% 40% at 50% -10%, rgba(14, 165, 233, 0.06), transparent 70%),
+    radial-gradient(ellipse 40% 30% at 90% 10%, rgba(16, 185, 129, 0.05), transparent 60%);
+  background-attachment: fixed;
 }
 
-@layer base {
-  /* Pin the light aesthetic: without this, native controls (inputs, scrollbars,
-     date pickers) render dark on a dark-mode OS and break the theme. */
-  :root {
-    color-scheme: light;
-  }
-
-  body {
-    background-color: var(--color-canvas);
-    color: var(--color-ink);
-    min-height: 100vh;
-    overflow-x: hidden;
-    background-image:
-      radial-gradient(
-        ellipse 60% 40% at 50% -10%,
-        rgb(118 192 236 / 0.08),
-        transparent 70%
-      ),
-      radial-gradient(
-        ellipse 40% 30% at 85% 5%,
-        rgb(255 246 220 / 0.55),
-        transparent 60%
-      );
-    background-attachment: fixed;
-  }
-
-  ::selection {
-    background-color: rgb(118 192 236 / 0.3);
-    color: var(--color-brand-700);
-  }
-
-  /* Visible, on-brand keyboard focus across every interactive element. */
-  :focus-visible {
-    outline: 2px solid var(--color-brand);
-    outline-offset: 2px;
-    border-radius: 0.5rem;
-  }
-
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  ::-webkit-scrollbar-track {
-    background: var(--color-canvas);
-  }
-  ::-webkit-scrollbar-thumb {
-    background: var(--color-brand-200);
-    border-radius: 9999px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-brand-300);
-  }
+/* Modern Clean-Tech Bento Card System */
+.bento-card {
+  position: relative;
+  background: var(--card-surface);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 1.25rem;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@layer components {
-  /* --- Bento card system --------------------------------------------------
-     Crisp 1px brand-tinted border, generous radius, soft diffused shadow,
-     and a smooth lift on hover. */
-  .bento-card {
-    position: relative;
-    background-color: var(--color-surface);
-    border: 1px solid rgb(66 91 154 / 0.12);
-    border-radius: var(--radius-bento);
-    box-shadow: var(--shadow-bento);
-    transition:
-      border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-      box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-      transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .bento-card:hover {
-    border-color: rgb(66 91 154 / 0.28);
-    box-shadow: var(--shadow-bento-hover);
-    transform: translateY(-2px);
-  }
-
-  /* Warm accent card — highlighted bento blocks, hero surfaces. */
-  .bento-card-warm {
-    background-color: var(--color-cream);
-  }
-
-  /* Large data containers (tables) opt out of the lift. */
-  .bento-card-static:hover {
-    transform: none;
-  }
-
-  /* Soft glow border for active / selected cards. */
-  .bento-card-active,
-  .bento-card[data-active="true"] {
-    border-color: rgb(66 91 154 / 0.45);
-    box-shadow:
-      var(--shadow-bento-hover),
-      0 0 0 4px rgb(118 192 236 / 0.18);
-  }
-
-  /* Uppercase mono eyebrow used on every KPI tile. */
-  .stat-label {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    color: var(--color-ink-muted);
-  }
+.bento-card:hover {
+  border-color: rgba(203, 213, 225, 1);
+  box-shadow: 0 10px 28px -4px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  transform: translateY(-2px);
 }
 
-/* Honour reduced-motion: drop lifts, glows and pulses to opacity-safe states. */
-@media (prefers-reduced-motion: reduce) {
-  .bento-card,
-  .bento-card:hover {
-    transition: none;
-    transform: none;
-  }
+/* Hero Command Console Card (Modern, Cool, and Classical Deep Slate) */
+.bento-hero {
+  position: relative;
+  background: linear-gradient(135deg, #0b1329 0%, #0f172a 50%, #1e293b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1.25rem;
+  box-shadow: 0 12px 32px -4px rgba(11, 19, 41, 0.25), 0 4px 12px -2px rgba(11, 19, 41, 0.15);
+  color: #ffffff;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+.bento-hero:hover {
+  border-color: rgba(16, 185, 129, 0.35);
+  box-shadow: 0 16px 36px -4px rgba(16, 185, 129, 0.15), 0 6px 16px -2px rgba(11, 19, 41, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Clean subtle scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }

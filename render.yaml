@@ -1,0 +1,58 @@
+# ==============================================================================
+# Render Blueprint Specification (render.yaml)
+# Project: Smart Campus Energy Optimization Platform (Archimedes)
+#
+# Deploy both services in ONE SHOT:
+# 1. In Render Dashboard (https://dashboard.render.com), click "New +" -> "Blueprint"
+# 2. Select your GitHub repository: Archimedes-BUP_Hackathon-
+# 3. Click "Apply" -> Render deploys both the backend and frontend together!
+# ==============================================================================
+
+version: "1"
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. BACKEND SERVICE: FastAPI + PuLP/CBC Linear Solver + SQLite Database
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: archimedes-energy-backend
+    runtime: python
+    plan: free
+    region: oregon
+    buildCommand: "pip install --upgrade pip && pip install -r backend/requirements.txt && cd backend && alembic upgrade head"
+    startCommand: "uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: APP_ENV
+        value: production
+      - key: DEBUG
+        value: "false"
+      - key: CORS_ORIGINS
+        value: "*"
+      - key: DATABASE_URL
+        value: "sqlite:///./data/smart_campus_energy.db"
+
+  # ----------------------------------------------------------------------------
+  # 2. FRONTEND SERVICE: Next.js 16 App Router (Turbopack, React 19, Recharts)
+  # ----------------------------------------------------------------------------
+  - type: web
+    name: archimedes-energy-frontend
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: frontend
+    buildCommand: "npm install && npm run build"
+    startCommand: "npm run start"
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 20.18.0
+      - key: NEXT_PUBLIC_API_URL
+        fromService:
+          type: web
+          name: archimedes-energy-backend
+          property: host

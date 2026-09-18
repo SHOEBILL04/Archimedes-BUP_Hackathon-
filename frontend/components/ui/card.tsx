@@ -1,30 +1,19 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Warm cream surface for hero and highlighted bento blocks. */
-  tone?: "surface" | "warm";
-  /** Large data containers opt out of the hover lift. */
-  static?: boolean;
-  /** Soft glow border for the selected card. */
-  active?: boolean;
-}
-
-const Card = React.forwardRef<HTMLDivElement, CardProps>(
-  ({ className, tone = "surface", static: isStatic, active, ...props }, ref) => (
-    <div
-      ref={ref}
-      data-active={active ? "true" : undefined}
-      className={cn(
-        "bento-card text-ink",
-        tone === "warm" && "bento-card-warm",
-        isStatic && "bento-card-static",
-        className
-      )}
-      {...props}
-    />
-  )
-);
+const Card = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "rounded-[1.25rem] border border-slate-200/90 bg-white text-slate-900 shadow-[0_4px_20px_-2px_rgba(15,23,42,0.04)] transition-all duration-300 hover:border-slate-300 hover:shadow-[0_10px_25px_-4px_rgba(15,23,42,0.08)] hover:-translate-y-0.5",
+      className
+    )}
+    {...props}
+  />
+));
 Card.displayName = "Card";
 
 const CardHeader = React.forwardRef<
@@ -40,13 +29,13 @@ const CardHeader = React.forwardRef<
 CardHeader.displayName = "CardHeader";
 
 const CardTitle = React.forwardRef<
-  HTMLHeadingElement,
+  HTMLParagraphElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
     className={cn(
-      "text-base font-bold leading-tight tracking-tight text-brand",
+      "text-base font-bold leading-tight tracking-tight text-[#0F172A]",
       className
     )}
     {...props}
@@ -60,7 +49,7 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-xs leading-relaxed text-ink-muted", className)}
+    className={cn("text-xs text-slate-500 leading-relaxed", className)}
     {...props}
   />
 ));

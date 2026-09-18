@@ -5,83 +5,84 @@ import { Badge } from "@/components/ui/badge";
 import { apiClient } from "@/lib/api/client";
 import { CheckCircle2, AlertCircle, RefreshCw, Terminal } from "lucide-react";
 
-type HealthState = "checking" | "ok" | "error";
-
 export function Header({
   title = "Smart Campus Energy Optimization",
 }: {
   title?: string;
 }) {
-  const [healthStatus, setHealthStatus] = useState<HealthState>("checking");
+  const [healthStatus, setHealthStatus] = useState<"checking" | "ok" | "error">(
+    "checking"
+  );
 
-  useEffect(() => {
-    let isMounted = true;
-
+  const verifyHealth = React.useCallback(() => {
+    setHealthStatus("checking");
     apiClient
       .checkHealth()
       .then((res) => {
-        if (isMounted) {
-          setHealthStatus(res.status === "ok" ? "ok" : "error");
-        }
+        setHealthStatus(res.status === "ok" ? "ok" : "error");
       })
       .catch(() => {
-        if (isMounted) {
-          setHealthStatus("error");
-        }
+        setHealthStatus("error");
       });
-
-    return () => {
-      isMounted = false;
-    };
   }, []);
 
+  useEffect(() => {
+    verifyHealth();
+
+    // Periodically poll every 10 seconds to detect when backend is awake
+    const interval = setInterval(() => {
+      apiClient.checkHealth().then((res) => {
+        if (res.status === "ok") {
+          setHealthStatus("ok");
+        }
+      }).catch(() => {});
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [verifyHealth]);
+
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-line bg-surface/90 px-8 backdrop-blur-md">
+    <header className="h-16 border-b border-slate-200/90 bg-white/90 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-20">
       <div className="flex items-center gap-3">
-        <h2 className="text-sm font-bold tracking-tight text-brand">{title}</h2>
-        <Badge variant="cream" className="hidden font-mono text-[10px] sm:inline-flex">
+        <h2 className="text-sm font-bold text-[#0F172A] tracking-tight">{title}</h2>
+        <Badge variant="emerald" className="font-mono text-[10px] hidden sm:inline-flex">
           BUP CSE Fest 2026
         </Badge>
       </div>
 
       <div className="flex items-center gap-4">
-        <div
-          className="flex items-center gap-2"
-          role="status"
-          aria-live="polite"
-        >
+        {/* API Health indicator */}
+        <div className="flex items-center gap-2">
           {healthStatus === "ok" ? (
-            <Badge
-              variant="accent"
-              className="flex items-center gap-1.5 px-3 py-1 font-mono text-[11px]"
-            >
-              <span className="flex h-1.5 w-1.5 animate-pulse rounded-full bg-accent-600" />
-              <CheckCircle2 className="h-3.5 w-3.5" />
-              <span>API 200 OK</span>
+            <Badge variant="emerald" className="flex items-center gap-1.5 py-1 px-3 select-none">
+              <span className="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+              <span className="font-mono text-[11px] text-emerald-800">API 200 OK</span>
             </Badge>
           ) : healthStatus === "checking" ? (
-            <Badge
-              variant="neutral"
-              className="flex items-center gap-1.5 px-3 py-1 font-mono text-[11px]"
-            >
-              <RefreshCw className="h-3.5 w-3.5 animate-spin" />
+            <Badge variant="secondary" className="flex items-center gap-1.5 py-1 px-3 font-mono text-[11px]">
+              <RefreshCw className="h-3.5 w-3.5 animate-spin text-slate-500" />
               <span>Connecting...</span>
             </Badge>
           ) : (
-            <Badge
-              variant="coral"
-              className="flex items-center gap-1.5 px-3 py-1 font-mono text-[11px]"
+            <button
+              type="button"
+              onClick={verifyHealth}
+              title="Click to re-check API connection"
+              className="focus:outline-none"
             >
-              <AlertCircle className="h-3.5 w-3.5" />
-              <span>API Offline (:8000)</span>
-            </Badge>
+              <Badge variant="coral" className="flex items-center gap-1.5 py-1 px-3 font-mono text-[11px] cursor-pointer hover:opacity-85 transition-opacity">
+                <AlertCircle className="h-3.5 w-3.5" />
+                <span>API Offline (Retry)</span>
+              </Badge>
+            </button>
           )}
         </div>
 
-        <div className="hidden h-4 w-px bg-line sm:block" />
+        <div className="h-4 w-[1px] bg-slate-200 hidden sm:block" />
 
-        <div className="hidden items-center gap-1.5 font-mono text-xs text-ink-muted sm:flex">
-          <Terminal className="h-3.5 w-3.5 text-brand" />
+        <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500 font-mono">
+          <Terminal className="h-3.5 w-3.5 text-slate-700" />
           <span>CBC Solver</span>
         </div>
       </div>

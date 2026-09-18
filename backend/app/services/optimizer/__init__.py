@@ -1,23 +1,67 @@
-"""Deterministic 24-hour LP dispatch optimizer (PuLP / CBC)."""
+"""Public API for the Energy Dispatch Optimizer Service.
+
+Higher-level orchestration layers (e.g. OptimizationService) should import
+from this package only. Direct access to PuLP or internal solver routines is prohibited.
+"""
 
 from __future__ import annotations
 
-from .lp import SolverNumericalError, solve_dispatch, total_cost
-from .models import (
-    DEFAULT_CHARGE_EFFICIENCY,
-    DEFAULT_DISCHARGE_EFFICIENCY,
-    SOLVER_NEGATIVE_TOLERANCE,
-    OptimizationOutcome,
+from app.services.optimizer.exceptions import (
+    OptimizationInfeasibleError,
+    OptimizationTimeoutError,
+    SolverExecutionError,
+)
+from app.services.optimizer.interface import IOptimizer
+from app.services.optimizer.lp_optimizer import (
+    BatteryInput,
+    HourResult,
+    InfeasibleError,
+    OptimizationError,
+    SolverError,
+)
+from app.services.optimizer.models import (
+    SUPPORTED_DIRECTIVE_TYPES,
+    BatteryConfig,
+    CompiledDirectives,
+    DirectiveType,
+    HourlyEnergyData,
+    HourlyEnergyProfile,
+    HourlyScheduleOutput,
+    NormalizedDirective,
+    OptimizationInput,
+    OptimizationResult,
     SolverStatus,
 )
+from app.services.optimizer.optimizer_service import run_optimization
+from app.services.optimizer.pulp_solver import PuLpEnergyOptimizer, optimize
+from app.services.optimizer.solver import EnergyOptimizer
 
 __all__ = [
-    "DEFAULT_CHARGE_EFFICIENCY",
-    "DEFAULT_DISCHARGE_EFFICIENCY",
-    "SOLVER_NEGATIVE_TOLERANCE",
-    "OptimizationOutcome",
-    "SolverNumericalError",
+    # Domain Models & Types
+    "BatteryConfig",
+    "BatteryInput",
+    "CompiledDirectives",
+    "DirectiveType",
+    "EnergyOptimizer",
+    "HourResult",
+    "HourlyEnergyData",
+    "HourlyEnergyProfile",
+    "HourlyScheduleOutput",
+    "InfeasibleError",
+    "NormalizedDirective",
+    "OptimizationError",
+    "OptimizationInfeasibleError",
+    "OptimizationInput",
+    "OptimizationResult",
+    "OptimizationTimeoutError",
+    "PuLpEnergyOptimizer",
+    "SUPPORTED_DIRECTIVE_TYPES",
+    "SolverError",
+    "SolverExecutionError",
     "SolverStatus",
-    "solve_dispatch",
-    "total_cost",
+    # Interfaces
+    "IOptimizer",
+    # Functions
+    "optimize",
+    "run_optimization",
 ]
