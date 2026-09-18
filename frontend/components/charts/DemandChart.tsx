@@ -34,57 +34,68 @@ export function DemandChart({ schedule }: DemandChartProps) {
         }));
 
   return (
-    <Card className="border-slate-800 bg-slate-900/50">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-base">
-          <Activity className="h-5 w-5 text-teal-400" />
-          <span>Demand vs Grid Import</span>
-        </CardTitle>
-        <CardDescription>
-          Hourly comparison between gross campus energy demand and grid import.
-        </CardDescription>
+    <Card className="bento-card border-white/[0.08] hover:border-cyan-400/30 h-full flex flex-col justify-between">
+      <CardHeader className="p-6 pb-2">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <CardTitle className="flex items-center gap-2 text-sm font-semibold text-white">
+              <Activity className="h-4 w-4 text-cyan-400" />
+              <span>Campus Demand vs. Grid Import</span>
+            </CardTitle>
+            <CardDescription className="text-xs text-slate-400">
+              Hourly 24-hour curve comparing campus load against energy purchased from the utility grid.
+            </CardDescription>
+          </div>
+          <span className="text-[10px] font-mono text-cyan-400/80 bg-cyan-950/40 border border-cyan-500/20 px-2 py-0.5 rounded-md hidden sm:inline-block">
+            24h Profile
+          </span>
+        </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-6 pt-2 flex-1">
         <div className="h-[280px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
-                <linearGradient id="demandGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.4} />
+                <linearGradient id="bentoDemandGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.35} />
                   <stop offset="95%" stopColor="#38bdf8" stopOpacity={0} />
                 </linearGradient>
-                <linearGradient id="gridGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                <linearGradient id="bentoGridGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#00f0ff" stopOpacity={0.4} />
+                  <stop offset="95%" stopColor="#00f0ff" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="hour" stroke="#64748b" fontSize={11} tickLine={false} />
-              <YAxis stroke="#64748b" fontSize={11} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+              <XAxis dataKey="hour" stroke="#64748b" fontSize={10} tickLine={false} />
+              <YAxis stroke="#64748b" fontSize={10} tickLine={false} />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#0f172a",
-                  borderColor: "#334155",
-                  borderRadius: "8px",
-                  fontSize: "12px",
+                  backgroundColor: "#070b16",
+                  borderColor: "rgba(255, 255, 255, 0.1)",
+                  borderRadius: "12px",
+                  fontSize: "11px",
+                  fontFamily: "monospace",
+                  boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.6)",
                 }}
               />
-              <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "10px" }} />
+              <Legend wrapperStyle={{ fontSize: "11px", fontFamily: "monospace", paddingTop: "8px" }} />
               <Area
                 type="monotone"
                 dataKey="demand"
-                name="Campus Demand (kWh)"
+                name="Gross Demand (kWh)"
                 stroke="#38bdf8"
+                strokeWidth={2}
                 fillOpacity={1}
-                fill="url(#demandGrad)"
+                fill="url(#bentoDemandGrad)"
               />
               <Area
                 type="monotone"
                 dataKey="grid"
-                name="Grid Import (kWh)"
-                stroke="#10b981"
+                name="Grid Dispatched (kWh)"
+                stroke="#00f0ff"
+                strokeWidth={2}
                 fillOpacity={1}
-                fill="url(#gridGrad)"
+                fill="url(#bentoGridGrad)"
               />
             </AreaChart>
           </ResponsiveContainer>

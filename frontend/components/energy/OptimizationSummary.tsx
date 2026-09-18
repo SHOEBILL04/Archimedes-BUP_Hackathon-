@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { OptimizationResponse } from "@/types/energy";
 import { formatCurrencyBDT, formatNumber } from "@/lib/utils";
-import { Coins, Zap, ShieldCheck, SolarPanel } from "lucide-react";
+import { Coins, Zap, ShieldCheck, SolarPanel, ArrowUpRight } from "lucide-react";
 
 interface OptimizationSummaryProps {
   result?: OptimizationResponse | null;
@@ -19,71 +19,102 @@ export function OptimizationSummary({ result }: OptimizationSummaryProps) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {/* Total Cost */}
-      <Card className="border-slate-800 bg-slate-900/60 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
-        <CardContent className="p-5 flex items-center justify-between">
-          <div>
-            <p className="text-xs font-medium text-slate-400 mb-1">Total Grid Cost</p>
-            <h4 className="text-2xl font-bold text-white tracking-tight">
-              {formatCurrencyBDT(totalCost)}
-            </h4>
-            <p className="text-[11px] text-emerald-400 mt-1">Calculated via LP solver</p>
+      {/* 1. Total Grid Cost Bento Card */}
+      <Card className="bento-card border-white/[0.08] hover:border-cyan-400/30 group">
+        <div className="absolute -top-12 -right-12 w-28 h-28 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-cyan-500/20 transition-colors" />
+        <CardContent className="p-5 flex flex-col justify-between h-full">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+              Total Grid Cost
+            </span>
+            <div className="h-8 w-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+              <Coins className="h-4 w-4" />
+            </div>
           </div>
-          <div className="h-10 w-10 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-            <Coins className="h-5 w-5" />
+          <div>
+            <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-white flex items-baseline gap-1">
+              <span>{formatCurrencyBDT(totalCost)}</span>
+            </div>
+            <div className="flex items-center gap-1.5 mt-2 text-[11px] text-cyan-400/80 font-mono">
+              <ArrowUpRight className="h-3 w-3" />
+              <span>Optimized with PuLP LP solver</span>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Grid Energy */}
-      <Card className="border-slate-800 bg-slate-900/60 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-24 h-24 bg-teal-500/5 rounded-full blur-2xl pointer-events-none" />
-        <CardContent className="p-5 flex items-center justify-between">
-          <div>
-            <p className="text-xs font-medium text-slate-400 mb-1">Grid Energy Import</p>
-            <h4 className="text-2xl font-bold text-white tracking-tight">
-              {formatNumber(totalGridKwh, 1)} <span className="text-sm font-normal text-slate-400">kWh</span>
-            </h4>
-            <p className="text-[11px] text-teal-400 mt-1">24-hr cumulative import</p>
+      {/* 2. Grid Energy Import Bento Card */}
+      <Card className="bento-card border-white/[0.08] hover:border-sky-400/30 group">
+        <div className="absolute -top-12 -right-12 w-28 h-28 bg-sky-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-sky-500/20 transition-colors" />
+        <CardContent className="p-5 flex flex-col justify-between h-full">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+              Grid Energy Import
+            </span>
+            <div className="h-8 w-8 rounded-lg bg-sky-500/10 border border-sky-500/20 flex items-center justify-center text-sky-400">
+              <Zap className="h-4 w-4" />
+            </div>
           </div>
-          <div className="h-10 w-10 rounded-lg bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
-            <Zap className="h-5 w-5" />
+          <div>
+            <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-white flex items-baseline gap-1.5">
+              <span>{formatNumber(totalGridKwh, 1)}</span>
+              <span className="text-xs font-mono font-normal text-slate-400">kWh</span>
+            </div>
+            <div className="flex items-center gap-1.5 mt-2 text-[11px] text-slate-400 font-mono">
+              <span>24-hr cumulative import</span>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Solar Harvested */}
-      <Card className="border-slate-800 bg-slate-900/60 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl pointer-events-none" />
-        <CardContent className="p-5 flex items-center justify-between">
-          <div>
-            <p className="text-xs font-medium text-slate-400 mb-1">Solar Utilized</p>
-            <h4 className="text-2xl font-bold text-white tracking-tight">
-              {formatNumber(totalSolarUsed, 1)} <span className="text-sm font-normal text-slate-400">kWh</span>
-            </h4>
-            <p className="text-[11px] text-amber-400 mt-1">Zero carbon generation</p>
+      {/* 3. Solar Harvested Bento Card */}
+      <Card className="bento-card border-white/[0.08] hover:border-amber-400/30 group">
+        <div className="absolute -top-12 -right-12 w-28 h-28 bg-amber-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-amber-500/20 transition-colors" />
+        <CardContent className="p-5 flex flex-col justify-between h-full">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+              Solar Utilized
+            </span>
+            <div className="h-8 w-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
+              <SolarPanel className="h-4 w-4" />
+            </div>
           </div>
-          <div className="h-10 w-10 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400">
-            <SolarPanel className="h-5 w-5" />
+          <div>
+            <div className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-white flex items-baseline gap-1.5">
+              <span>{formatNumber(totalSolarUsed, 1)}</span>
+              <span className="text-xs font-mono font-normal text-slate-400">kWh</span>
+            </div>
+            <div className="flex items-center gap-1.5 mt-2 text-[11px] text-emerald-400 font-mono">
+              <span>Zero-carbon self-consumption</span>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Deterministic Replay Status */}
-      <Card className="border-slate-800 bg-slate-900/60 relative overflow-hidden">
-        <CardContent className="p-5 flex items-center justify-between">
+      {/* 4. Physical Balance & Replay Bento Card */}
+      <Card className="bento-card border-white/[0.08] hover:border-cyan-400/30 group">
+        <div className="absolute -top-12 -right-12 w-28 h-28 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none group-hover:bg-cyan-500/20 transition-colors" />
+        <CardContent className="p-5 flex flex-col justify-between h-full">
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
+              Replay Validation
+            </span>
+            <div className="h-8 w-8 rounded-lg bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center text-cyan-400">
+              <ShieldCheck className="h-4 w-4" />
+            </div>
+          </div>
           <div>
-            <p className="text-xs font-medium text-slate-400 mb-1">Replay Validation</p>
-            <div className="mt-1">
-              <Badge variant={isVerified ? "success" : "warning"} className="text-xs">
+            <div>
+              <Badge
+                variant={isVerified ? "cyan" : "warning"}
+                className="font-mono text-[11px] px-2.5 py-1"
+              >
                 {isVerified ? "Physical Balance Verified" : "Verification Failed"}
               </Badge>
             </div>
-            <p className="text-[11px] text-slate-400 mt-2">Max error: 0.000 kWh</p>
-          </div>
-          <div className="h-10 w-10 rounded-lg bg-teal-500/10 border border-teal-500/20 flex items-center justify-center text-teal-400">
-            <ShieldCheck className="h-5 w-5" />
+            <div className="flex items-center gap-1.5 mt-3 text-[11px] text-slate-400 font-mono">
+              <span>Max error: 0.000 kWh</span>
+            </div>
           </div>
         </CardContent>
       </Card>
