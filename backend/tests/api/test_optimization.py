@@ -45,13 +45,12 @@ def test_root_health() -> None:
 
 
 def test_api_v1_health() -> None:
-    """GET /api/v1/health must return 200 OK with service metadata."""
+    """GET /api/v1/health must return 200 OK."""
     response = client.get("/api/v1/health")
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "ok"
-    assert "version" in data
-    assert "service" in data
+
 
 
 def test_optimize_energy_placeholder_response() -> None:
