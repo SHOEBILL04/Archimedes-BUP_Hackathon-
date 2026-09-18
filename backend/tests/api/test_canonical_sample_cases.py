@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app
+from app.schemas.optimization import DirectiveInterpretation
 
 client = TestClient(app)
 
@@ -31,9 +33,13 @@ def test_canonical_sample_cases_end_to_end(case: dict) -> None:
     """Validate each of the 10 official BUP CSE Fest public sample cases against the API contract."""
     payload = case["input"]
     expected_out = case["expected_output"]
+    expected_interps = [
+        DirectiveInterpretation(**d) for d in expected_out["directive_interpretation"]
+    ]
 
     # 1. Send exact official judge input shape to POST /optimize-energy
-    response = client.post("/optimize-energy", json=payload)
+    with patch("app.services.optimization_service.LLMService.interpret_notes", return_value=expected_interps):
+        response = client.post("/optimize-energy", json=payload)
     assert response.status_code == 200, f"Failed on {case['id']}: {response.text}"
 
     data = response.json()
@@ -71,7 +77,7 @@ def test_canonical_sample_cases_end_to_end(case: dict) -> None:
             assert isinstance(interp["structured_adjustment"], dict)
             assert "hours" in interp["structured_adjustment"]
             hours = interp["structured_adjustment"]["hours"]
-            assert hours == sorted(list(set(hours)))
+            assert hours == sorted(set(hours))
             assert all(0 <= h <= 23 for h in hours)
 
     # 4. Hourly plan checks (Section 10.3)
@@ -83,7 +89,6 @@ def test_canonical_sample_cases_end_to_end(case: dict) -> None:
 
     recalculated_cost = 0.0
     recalculated_grid_kwh = 0.0
-    hourly_demands = {h["hour"]: h["demand_kwh"] for h in payload["hours"]}
     hourly_tariffs = {h["hour"]: h["tariff_bdt_per_kwh"] for h in payload["hours"]}
 
     prev_energy = initial_energy

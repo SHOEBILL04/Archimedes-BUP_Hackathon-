@@ -7,7 +7,6 @@ from app.repositories.optimization_repository import OptimizationRepository
 from app.schemas.optimization import (
     DirectiveInterpretation,
     EnergyScenario,
-    HourlyPlanEntry,
     HourlyPlanItem,
     HourSchedule,
     OptimizationResponse,

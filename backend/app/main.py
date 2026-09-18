@@ -1,5 +1,4 @@
-from __future__ import annotations
-
+import os
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
@@ -12,7 +11,6 @@ from app.api.routes.health import router as root_health_router
 from app.api.routes.optimization import router as root_optimization_router
 from app.core.config import get_settings
 from app.core.exceptions import AppBaseException
-import os
 from app.core.logging import logger
 
 settings = get_settings()
