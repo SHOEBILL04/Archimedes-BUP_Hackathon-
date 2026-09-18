@@ -156,82 +156,76 @@ SQLite was chosen for this hackathon service because:
 
 ### Environment Configuration
 
-1. Copy `.env.example` to create root and service environment files:
-   ```bash
-   cp .env.example backend/.env
-   cp frontend/.env.example frontend/.env.local
-   ```
+### Environment Configuration
 
-2. Configure environment variables in `backend/.env` if using OpenAI features:
-   ```env
-   OPENAI_API_KEY=your_key_here
-   OPENAI_MODEL=gpt-4o-mini
-   ```
+Create `backend/.env` with your environment variables (**do not commit secrets!**):
+```env
+APP_NAME="Smart Campus Energy Optimization API"
+APP_ENV=production
+DEBUG=false
+HOST=0.0.0.0
+PORT=8000
+DATABASE_URL=sqlite:///./data/smart_campus_energy.db
+
+# LLM Provider Configuration
+GROQ_API_KEY=your_groq_api_key_here
+GROQ_MODEL=openai/gpt-oss-120b
+GROQ_BASE_URL=https://api.groq.com/openai/v1
+
+# OpenAI Fallback
+OPENAI_API_KEY=your_openai_key_here
+OPENAI_MODEL=gpt-4o-mini
+
+# LangSmith Tracing & Observability
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
+LANGCHAIN_API_KEY=your_langchain_key_here
+LANGCHAIN_PROJECT=BUP HACKATHON
+
+# Timeouts
+LLM_TIMEOUT_SECONDS=8
+SOLVER_TIMEOUT_SECONDS=5
+API_TIMEOUT_SECONDS=29
+```
 
 ---
 
-## 6. Running Locally with Makefile
+## 6. Docker Fallback & Standalone Container Run
 
-A standard `Makefile` is provided at the root:
+### Build & Run Backend Standalone Image:
+```bash
+docker build -t gridwise-backend backend/
+docker run -p 8000:8000 -e GROQ_API_KEY="your_key" gridwise-backend
+```
 
-| Command | Description |
-|---|---|
-| `make dev` | Start both FastAPI backend (:8000) and Next.js frontend (:3000) concurrently |
-| `make backend` | Start FastAPI backend server with hot-reload |
-| `make frontend` | Start Next.js frontend development server |
-| `make test` | Run all automated test suites (backend pytest + frontend tsc) |
-| `make lint` | Run code quality linters (Ruff on backend + ESLint on frontend) |
-| `make format` | Automatically format backend code using Ruff |
-| `make migrate` | Apply Alembic database migrations to SQLite |
-| `make migration msg="..."` | Generate a new Alembic migration revision |
-| `make docker-up` | Build and start services using Docker Compose |
-| `make docker-down` | Stop and remove Docker Compose containers |
-
----
-
-## 7. Running with Docker Compose
-
-Run the entire application stack in containers with one command:
-
+### Run Full Stack with Docker Compose:
 ```bash
 docker compose up --build
 ```
-
-- **Frontend UI**: [http://localhost:3000](http://localhost:3000)
-- **FastAPI Backend**: [http://localhost:8000](http://localhost:8000)
-- **Interactive Swagger Docs**: [http://localhost:8000/docs](http://localhost:8000/docs)
-- **Health Checks**:
-  - `http://localhost:8000/health`
-  - `http://localhost:8000/api/v1/health`
-
-### SQLite Persistence Guarantee
-
-The SQLite database file is persisted to `./backend/data/smart_campus_energy.db` on your host machine. You can verify that data persists across container lifecycles:
-
-```bash
-# Restart or recreate containers
-docker compose down
-docker compose up -d
-
-# Notice that previously saved scenarios and optimization runs remain intact in ./backend/data/
-```
+The service binds to `0.0.0.0:8000` with no baked-in secrets.
 
 ---
 
-## 8. API Specification
+## 7. API Specification & Sample curl Commands
 
-### `GET /health` & `GET /api/v1/health`
-Returns health check confirmation.
+### 1. Health Readiness Check
+```bash
+curl -X GET http://localhost:8000/health
+```
+**Response (200 OK)**:
 ```json
 {
   "status": "ok"
 }
 ```
 
-### `POST /api/v1/optimize-energy`
-Submits 24-hour campus profiles and natural language operator directives.
-
-**Sample Request**:
+### 2. Optimize Energy Dispatch
+```bash
+curl -X POST http://localhost:8000/optimize-energy \
+  -H "Content-Type: application/json" \
+  -d @BUP_CSE_FEST_2026_Participant_Docs/BUP_CSE_FEST_2026_Preli_Public_Sample_Cases.json
+```
+*(Or send an individual scenario payload)*:
 ```json
 {
   "demand_kwh": [35, 34, 33, 32, 31, 30, 32, 38, 45, 52, 58, 62, 65, 68, 70, 72, 75, 78, 74, 68, 60, 52, 45, 40],
@@ -325,6 +319,27 @@ Outputs:
 
 ---
 
-## 10. License
+## 10. Credited Libraries & Open Source Tools
+
+- **COIN-OR CBC & PuLP**: Linear programming modeling and solving engine.
+- **FastAPI & Uvicorn**: High-performance asynchronous Python web framework and ASGI server.
+- **Pydantic v2**: High-speed data validation and settings management.
+- **Groq Cloud Python SDK & OpenAI SDK**: LPU-accelerated inference for sub-second LLM responses.
+- **LangSmith**: Production tracing, latency tracking, and observability.
+- **Next.js & React**: Modern front-end framework.
+- **Tailwind CSS & Lucide Icons**: UI design and iconography.
+- **Recharts**: Responsive SVG charting library for energy telemetry.
+
+---
+
+## 11. Known Limitations & Operational Notes
+
+1. **Whole-Hour Time Resolution**: As defined by the Problem Statement, time intervals are evaluated in 1-hour discrete intervals (0 through 23).
+2. **Deterministic Start-Inclusive / End-Exclusive**: In accordance with the official rules, time windows (e.g. "1 PM to 3 PM") map to hours `[13, 14]`.
+3. **External Model Quota**: Groq Cloud inference is the primary LLM provider. If Groq API rate limits are encountered, the system automatically falls back to OpenAI or rule-based deterministic heuristics to guarantee high availability without crashing.
+
+---
+
+## 12. License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
