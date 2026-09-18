@@ -1,7 +1,17 @@
 import { HealthStatusResponse } from "@/types/api";
 import { EnergyScenario, OptimizationResponse } from "@/types/energy";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+function resolveApiBase(): string {
+  const rawUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+  const trimmed = rawUrl.trim().replace(/\/+$/, "");
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) {
+    return trimmed;
+  }
+  // If Render or user provides a hostname without scheme, default to https
+  return `https://${trimmed}`;
+}
+
+const API_BASE = resolveApiBase();
 
 export const apiClient = {
   async checkHealth(): Promise<HealthStatusResponse> {
