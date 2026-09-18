@@ -1,0 +1,5 @@
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+!.gitignore

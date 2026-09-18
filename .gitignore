@@ -1,25 +1,78 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Environment Files & Secrets (Never commit secrets)
+.env
+.env*.local
+backend/.env
+frontend/.env.local
+*.pem
+*.key
+
+# Database Files
+backend/data/*.db
+backend/data/*.db-journal
+backend/data/*.sqlite
+backend/data/*.sqlite3
+*.db
+*.sqlite
+
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
 
-# Virtual Environment
+# Virtual Environments
 .venv/
 venv/
-env/
 ENV/
-.env
+env/
 
-# Testing & Type Checking
+# Testing & Coverage
 .pytest_cache/
-.mypy_cache/
 .coverage
 htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+.ruff_cache/
 
-# Editor / IDE
+# Node & Next.js
+frontend/node_modules/
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Next.js Build Output
+frontend/.next/
+frontend/out/
+.next/
+out/
+
+# IDE & Editors
 .vscode/
 .idea/
 *.swp
 *.swo
+*.sublime-workspace
+*.sublime-project
