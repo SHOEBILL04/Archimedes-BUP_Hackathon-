@@ -14,7 +14,7 @@ export function Header({
     "checking"
   );
 
-  const verifyHealth = React.useCallback(() => {
+  const handleManualRetry = () => {
     setHealthStatus("checking");
     apiClient
       .checkHealth()
@@ -24,22 +24,41 @@ export function Header({
       .catch(() => {
         setHealthStatus("error");
       });
-  }, []);
+  };
 
   useEffect(() => {
-    verifyHealth();
+    let isMounted = true;
+
+    apiClient
+      .checkHealth()
+      .then((res) => {
+        if (isMounted) {
+          setHealthStatus(res.status === "ok" ? "ok" : "error");
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setHealthStatus("error");
+        }
+      });
 
     // Periodically poll every 10 seconds to detect when backend is awake
     const interval = setInterval(() => {
-      apiClient.checkHealth().then((res) => {
-        if (res.status === "ok") {
-          setHealthStatus("ok");
-        }
-      }).catch(() => {});
+      apiClient
+        .checkHealth()
+        .then((res) => {
+          if (isMounted && res.status === "ok") {
+            setHealthStatus("ok");
+          }
+        })
+        .catch(() => {});
     }, 10000);
 
-    return () => clearInterval(interval);
-  }, [verifyHealth]);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <header className="h-16 border-b border-slate-200/90 bg-white/90 backdrop-blur-md px-8 flex items-center justify-between sticky top-0 z-20">
@@ -64,7 +83,7 @@ export function Header({
           ) : (
             <button
               type="button"
-              onClick={verifyHealth}
+              onClick={handleManualRetry}
               title="Click to re-check API connection"
               className="focus:outline-none"
             >
