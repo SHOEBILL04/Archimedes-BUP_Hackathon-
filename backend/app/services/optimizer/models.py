@@ -466,3 +466,23 @@ class ReplayValidationResult:
     total_grid_cost_bdt: float
     violations: list[str] = field(default_factory=list)
     details: dict[str, Any] = field(default_factory=dict)
+
+    @property
+    def is_valid(self) -> bool:
+        """Alias for verified."""
+        return self.verified
+
+    @property
+    def errors(self) -> list[str]:
+        """Alias for violations."""
+        return self.violations
+
+    @property
+    def recalculated_total_cost(self) -> float:
+        """Alias for total_grid_cost_bdt."""
+        return self.total_grid_cost_bdt
+
+    @property
+    def max_violation_magnitude(self) -> float:
+        """Alias for max_constraint_error."""
+        return self.max_constraint_error

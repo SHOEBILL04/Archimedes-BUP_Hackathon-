@@ -17,6 +17,10 @@ from app.services.validation.compiler import (
     compile_directives,
     preprocess_directives,
 )
+from app.services.validation.deterministic_replay_validator import (
+    DeterministicReplayValidator,
+    replay_validate_dispatch,
+)
 from app.services.validation.directive_guardrail import (
     BatchDirectiveValidationResult,
     DeterministicDirectiveGuardrail,
@@ -59,6 +63,7 @@ __all__ = [
     # Guardrails & Compilers
     "DeterministicDirectiveCompiler",
     "DeterministicDirectiveGuardrail",
+    "DeterministicReplayValidator",
     # Exceptions
     "GuardrailValidationError",
     "ReplayValidationError",
@@ -71,6 +76,7 @@ __all__ = [
     "noop",
     "preprocess_directives",
     "replay_validate",
+    "replay_validate_dispatch",
     "replay_validate_schedule",
     "validate_and_raise",
     "validate_directive",
